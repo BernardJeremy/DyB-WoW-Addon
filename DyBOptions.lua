@@ -16,20 +16,20 @@ f:SetScript("OnEvent", function(self, event, addonName)
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_ForceMilitaryTime", "forceMilitaryTime",
             DyBAddon_SavedVars, type(true),
-            "Force 24-Hour Clock on Login", true)
+            "Forcer le format 24 heures à la connexion", true)
         setting:SetValueChangedCallback(DyBAddon.OnMilitaryTimeChanged)
         Settings.CreateCheckbox(category, setting,
-            "When enabled, the game clock is forced to 24-hour format on login.")
+            "Lorsque activé, l'horloge du jeu est forcée au format 24 heures à la connexion.")
     end
 
     do
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_HideNpcBubbles", "hideNpcBubbles",
             DyBAddon_SavedVars, type(false),
-            "Hide NPC Chat Bubbles", false)
+            "Masquer les bulles de discussion des PNJ", false)
         setting:SetValueChangedCallback(DyBAddon.OnHideBubblesChanged)
         Settings.CreateCheckbox(category, setting,
-            "When enabled, all in-game chat bubbles above characters are hidden.")
+            "Lorsque activé, toutes les bulles de discussion en jeu au-dessus des personnages sont masquées.")
     end
 
     Settings.RegisterAddOnCategory(category)
