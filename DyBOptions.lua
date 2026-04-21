@@ -16,20 +16,20 @@ f:SetScript("OnEvent", function(self, event, addonName)
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_ForceMilitaryTime", "forceMilitaryTime",
             DyBAddon_SavedVars, type(true),
-            "Forcer le format 24 heures à la connexion", true)
+            "Forcer le format 24 heures", true)
         setting:SetValueChangedCallback(DyBAddon.OnMilitaryTimeChanged)
         Settings.CreateCheckbox(category, setting,
-            "Lorsque activé, l'horloge du jeu est forcée au format 24 heures à la connexion.")
+            "Force l'horloge du jeu au format 24 heures à la connexion.")
     end
 
     do
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_HideNpcBubbles", "hideNpcBubbles",
             DyBAddon_SavedVars, type(false),
-            "Masquer les bulles de discussion des PNJ", false)
+            "Masquer les bulles de discussion", false)
         setting:SetValueChangedCallback(DyBAddon.OnHideBubblesChanged)
         Settings.CreateCheckbox(category, setting,
-            "Lorsque activé, toutes les bulles de discussion en jeu au-dessus des personnages sont masquées.")
+            "Masque toutes les bulles de discussion en jeu au-dessus des personnages.")
     end
 
     do
@@ -39,7 +39,7 @@ f:SetScript("OnEvent", function(self, event, addonName)
             "Inspecter les membres du groupe", true)
         setting:SetValueChangedCallback(DyBAddon.OnGroupInspectChanged)
         Settings.CreateCheckbox(category, setting,
-            "Lorsque activé, affiche les informations (race, classe, spécialisation, niveau d'objet) des nouveaux membres du groupe dans le tchat.")
+            "Affiche les informations des nouveaux membres du groupe dans le tchat.")
     end
 
     do
@@ -49,7 +49,7 @@ f:SetScript("OnEvent", function(self, event, addonName)
             "Activer l'inspection en raid", false)
         setting:SetValueChangedCallback(DyBAddon.OnGroupInspectRaidChanged)
         Settings.CreateCheckbox(category, setting,
-            "Lorsque activé, l'inspection des membres fonctionne également dans les groupes de raid.")
+            "L'inspection des membres fonctionne également dans les groupes de raid.")
     end
 
     Settings.RegisterAddOnCategory(category)
