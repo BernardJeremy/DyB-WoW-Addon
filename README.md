@@ -9,12 +9,13 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 - **Group Inspector**: When joining a group or when a new member arrives, logs each member's race (with icon), class (with icon), specialization (with icon), and item level to your chat window (configurable, enabled by default). A separate option controls whether inspection runs in raid groups (disabled by default).
 - **Pull Timer**: Launch an in-game countdown for the whole group using `/pull <seconds>`. Requires party/raid leader or raid officer status (or none if solo). Use `/pull 0` to cancel the countdown.
 - **Combat Meter Reset Prompt**: Displays a Yes/No popup offering to reset all combat sessions (`C_DamageMeter.ResetAllCombatSessions()`) when joining a group and/or entering an instance. Each trigger has a dedicated toggle in the options panel (both enabled by default).
+- **Decimal Item Level**: Replaces the character sheet item level display with a two-decimal-precision value. Shows equipped item level alongside the overall average in the tooltip, and includes PvP item level when it differs. Active for all player levels.
 
 All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
 
 ## Architecture
 
-The addon is modularized across 6 Lua files for clean separation of concerns:
+The addon is modularized across 7 Lua files for clean separation of concerns:
 
 ### **DyBCore.lua**
 - Defines the `DyBAddon` namespace table
@@ -56,6 +57,14 @@ The addon is modularized across 6 Lua files for clean separation of concerns:
 - Each trigger is independently toggled via options (both enabled by default)
 - Exposes `DyBAddon.OnMeterResetOnGroupChanged()` and `DyBAddon.OnMeterResetOnInstanceChanged()` callbacks
 
+
+### **DybItemLevelDecimal.lua**
+- Hooks `PaperDollFrame_SetItemLevel` via `hooksecurefunc` to override the character sheet item level display
+- Sets `MIN_PLAYER_LEVEL_FOR_ITEM_LEVEL_DISPLAY` to `1` so the stat shows at all levels
+- Rounds average, equipped, and PvP item levels to two decimal places
+- Displays the equipped item level in the tooltip alongside the overall average
+- Appends PvP item level to the tooltip when it differs from the average
+- No SavedVariables or options panel integration; always active
 
 ### **DyBAddon.toc**
 - Addon manifest with metadata
