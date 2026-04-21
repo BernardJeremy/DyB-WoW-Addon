@@ -122,7 +122,7 @@ local function ScanGroup()
 
     for i = 1, count do
         local unit = prefix .. i
-        if UnitExists(unit) and not UnitIsUnit(unit, "player") then
+        if UnitExists(unit) and not UnitIsUnit(unit, "player") and UnitIsPlayer(unit) then
             local guid = UnitGUID(unit)
             if guid and not announcedGUIDs[guid] then
                 announcedGUIDs[guid] = true
@@ -203,7 +203,7 @@ local function InspectAllMembers()
     local members = {}
     for i = 1, count do
         local unit = prefix .. i
-        if UnitExists(unit) and not UnitIsUnit(unit, "player") then
+        if UnitExists(unit) and not UnitIsUnit(unit, "player") and UnitIsPlayer(unit) then
             local guid = UnitGUID(unit)
             if guid then
                 table.insert(members, { unit = unit, guid = guid })
