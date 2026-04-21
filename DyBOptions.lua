@@ -32,5 +32,25 @@ f:SetScript("OnEvent", function(self, event, addonName)
             "Lorsque activé, toutes les bulles de discussion en jeu au-dessus des personnages sont masquées.")
     end
 
+    do
+        local setting = Settings.RegisterAddOnSetting(category,
+            "DyBAddon_GroupInspect", "groupInspect",
+            DyBAddon_SavedVars, type(true),
+            "Inspecter les membres du groupe", true)
+        setting:SetValueChangedCallback(DyBAddon.OnGroupInspectChanged)
+        Settings.CreateCheckbox(category, setting,
+            "Lorsque activé, affiche les informations (race, classe, spécialisation, niveau d'objet) des nouveaux membres du groupe dans le tchat.")
+    end
+
+    do
+        local setting = Settings.RegisterAddOnSetting(category,
+            "DyBAddon_GroupInspectRaid", "groupInspectRaid",
+            DyBAddon_SavedVars, type(false),
+            "Activer l'inspection en raid", false)
+        setting:SetValueChangedCallback(DyBAddon.OnGroupInspectRaidChanged)
+        Settings.CreateCheckbox(category, setting,
+            "Lorsque activé, l'inspection des membres fonctionne également dans les groupes de raid.")
+    end
+
     Settings.RegisterAddOnCategory(category)
 end)

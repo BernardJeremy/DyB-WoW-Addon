@@ -9,4 +9,5 @@
 DyBCore.lua
 DyBClockFixer.lua
 DyBBubbleHider.lua
+DyBGroupInspector.lua
 DyBOptions.lua

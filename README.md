@@ -1,17 +1,18 @@
 # DyBAddon
 
-A lightweight World of Warcraft addon for DayBar that provides two customizable gameplay features.
+A lightweight World of Warcraft addon for DayBar that provides customizable gameplay features.
 
 ## Features
 
 - **Force 24-Hour Clock**: Automatically enables 24-hour military time format on login (configurable, enabled by default)
 - **Hide NPC Chat Bubbles**: Toggle to hide all in-game chat bubbles above characters (configurable, disabled by default)
+- **Group Inspector**: When joining a group or when a new member arrives, logs each member's race (with icon), class (with icon), specialization (with icon), and item level to your chat window (configurable, enabled by default). A separate option controls whether inspection runs in raid groups (disabled by default).
 
-Both features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
+All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
 
 ## Architecture
 
-The addon is modularized across 4 Lua files for clean separation of concerns:
+The addon is modularized across 5 Lua files for clean separation of concerns:
 
 ### **DyBCore.lua**
 - Defines the `DyBAddon` namespace table
@@ -27,9 +28,17 @@ The addon is modularized across 4 Lua files for clean separation of concerns:
 - Applies chat bubble hiding if the option is enabled
 - Exposes `DyBAddon.OnHideBubblesChanged()` callback for real-time option toggling
 
+### **DyBGroupInspector.lua**
+- Listens to `GROUP_ROSTER_UPDATE` to detect new group members
+- Uses `NotifyInspect()` / `INSPECT_READY` to query each member's specialization and item level
+- Displays race, class, and spec icons inline in chat via texture escape sequences
+- Queues inspect requests one at a time with throttling and a 5-second safety timeout
+- Exposes `DyBAddon.OnGroupInspectChanged()` and `DyBAddon.OnGroupInspectRaidChanged()` callbacks
+- Offers a slash command `/info` to log up to date group members info
+
 ### **DyBOptions.lua**
 - Registers the settings category using the `Settings` API
-- Creates two checkbox options with tooltips
+- Creates four checkbox options with tooltips
 - Initializes saved variables on `ADDON_LOADED`
 - Manages setting callbacks for immediate UI updates
 
@@ -42,8 +51,10 @@ The addon is modularized across 4 Lua files for clean separation of concerns:
 
 1. **Addon Load**: All `.lua` files loaded in order (Core → Features → Options)
 2. **ADDON_LOADED**: Saved variables initialized, settings panel registered
-3. **PLAYER_LOGIN**: Features apply their settings based on saved preferences
-4. **Option Toggling**: Callbacks fire immediately when user changes settings in-game
+3. **PLAYER_LOGIN**: CVar-based features apply their settings
+4. **GROUP_ROSTER_UPDATE**: Group inspector detects new members and queues inspections
+5. **INSPECT_READY**: Inspect results are received and printed to chat
+6. **Option Toggling**: Callbacks fire immediately when user changes settings in-game
 
 ## Compatibility
 
