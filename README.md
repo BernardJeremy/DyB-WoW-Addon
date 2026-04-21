@@ -7,6 +7,7 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 - **Force 24-Hour Clock**: Automatically enables 24-hour military time format on login (configurable, enabled by default)
 - **Hide NPC Chat Bubbles**: Toggle to hide all in-game chat bubbles above characters (configurable, disabled by default)
 - **Group Inspector**: When joining a group or when a new member arrives, logs each member's race (with icon), class (with icon), specialization (with icon), and item level to your chat window (configurable, enabled by default). A separate option controls whether inspection runs in raid groups (disabled by default).
+- **Pull Timer**: Launch an in-game countdown for the whole group using `/pull <seconds>`. Requires party/raid leader or raid officer status (or none if solo). Use `/pull 0` to cancel the countdown.
 
 All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
 
@@ -41,6 +42,12 @@ The addon is modularized across 5 Lua files for clean separation of concerns:
 - Creates four checkbox options with tooltips
 - Initializes saved variables on `ADDON_LOADED`
 - Manages setting callbacks for immediate UI updates
+
+### **DybPullTimer.lua**
+- Register a `/pull` command to trigger pull countdown
+- Use `/pull 0` to cancel pull countdown
+- Check for party leaderer / raid leader/co-leader role
+
 
 ### **DyBAddon.toc**
 - Addon manifest with metadata
