@@ -52,5 +52,25 @@ f:SetScript("OnEvent", function(self, event, addonName)
             "L'inspection des membres fonctionne également dans les groupes de raid.")
     end
 
+    do
+        local setting = Settings.RegisterAddOnSetting(category,
+            "DyBAddon_MeterResetOnGroup", "meterResetOnGroup",
+            DyBAddon_SavedVars, type(true),
+            "Proposer la RaZ des compteurs (groupe)", true)
+        setting:SetValueChangedCallback(DyBAddon.OnMeterResetOnGroupChanged)
+        Settings.CreateCheckbox(category, setting,
+            "Propose le reset du recount lorsque vous rejoignez un groupe.")
+    end
+
+    do
+        local setting = Settings.RegisterAddOnSetting(category,
+            "DyBAddon_MeterResetOnInstance", "meterResetOnInstance",
+            DyBAddon_SavedVars, type(true),
+            "Proposer la RaZ des compteurs (instance)", true)
+        setting:SetValueChangedCallback(DyBAddon.OnMeterResetOnInstanceChanged)
+        Settings.CreateCheckbox(category, setting,
+            "Propose le reset du recount à l'entrée d'une instance.")
+    end
+
     Settings.RegisterAddOnCategory(category)
 end)

@@ -8,12 +8,13 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 - **Hide NPC Chat Bubbles**: Toggle to hide all in-game chat bubbles above characters (configurable, disabled by default)
 - **Group Inspector**: When joining a group or when a new member arrives, logs each member's race (with icon), class (with icon), specialization (with icon), and item level to your chat window (configurable, enabled by default). A separate option controls whether inspection runs in raid groups (disabled by default).
 - **Pull Timer**: Launch an in-game countdown for the whole group using `/pull <seconds>`. Requires party/raid leader or raid officer status (or none if solo). Use `/pull 0` to cancel the countdown.
+- **Combat Meter Reset Prompt**: Displays a Yes/No popup offering to reset all combat sessions (`C_DamageMeter.ResetAllCombatSessions()`) when joining a group and/or entering an instance. Each trigger has a dedicated toggle in the options panel (both enabled by default).
 
 All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
 
 ## Architecture
 
-The addon is modularized across 5 Lua files for clean separation of concerns:
+The addon is modularized across 6 Lua files for clean separation of concerns:
 
 ### **DyBCore.lua**
 - Defines the `DyBAddon` namespace table
@@ -39,7 +40,7 @@ The addon is modularized across 5 Lua files for clean separation of concerns:
 
 ### **DyBOptions.lua**
 - Registers the settings category using the `Settings` API
-- Creates four checkbox options with tooltips
+- Creates six checkbox options with tooltips
 - Initializes saved variables on `ADDON_LOADED`
 - Manages setting callbacks for immediate UI updates
 
@@ -47,6 +48,13 @@ The addon is modularized across 5 Lua files for clean separation of concerns:
 - Register a `/pull` command to trigger pull countdown
 - Use `/pull 0` to cancel pull countdown
 - Check for party leaderer / raid leader/co-leader role
+
+### **DyBMeterReset.lua**
+- Listens to `GROUP_ROSTER_UPDATE` to detect when the player newly joins a group
+- Listens to `PLAYER_ENTERING_WORLD` to detect instance entry (skips login and UI reload)
+- Shows a `StaticPopup` Yes/No dialog to reset all combat sessions via `C_DamageMeter.ResetAllCombatSessions()`
+- Each trigger is independently toggled via options (both enabled by default)
+- Exposes `DyBAddon.OnMeterResetOnGroupChanged()` and `DyBAddon.OnMeterResetOnInstanceChanged()` callbacks
 
 
 ### **DyBAddon.toc**

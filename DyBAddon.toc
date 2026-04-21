@@ -11,4 +11,5 @@ DyBClockFixer.lua
 DyBBubbleHider.lua
 DyBGroupInspector.lua
 DyBPullTimer.lua
+DyBMeterReset.lua
 DyBOptions.lua
