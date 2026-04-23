@@ -7,10 +7,10 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 - **Force 24-Hour Clock**: Automatically enables 24-hour military time format on login (configurable, enabled by default)
 - **Hide NPC Chat Bubbles**: Toggle to hide all in-game chat bubbles above characters (configurable, disabled by default)
 - **Group Inspector**: When joining a group or when a new member arrives, logs each member's race (with icon), class (with icon), specialization (with icon), and item level to your chat window (configurable, enabled by default). A separate option controls whether inspection runs in raid groups (disabled by default).
-- **Pull Timer**: Launch an in-game countdown for the whole group using `/pull <seconds>`. Requires party/raid leader or raid officer status (or none if solo). Use `/pull 0` to cancel the countdown.
+- **Pull Timer**: Launch an in-game countdown for the whole group using `/pull <seconds>`. Requires party/raid leader or raid officer status (or none if solo). Use `/pull 0` to cancel the countdown. (configurable, enabled by default)
 - **Combat Meter Reset Prompt**: Displays a Yes/No popup offering to reset all combat sessions (`C_DamageMeter.ResetAllCombatSessions()`) when joining a group and/or entering an instance. Each trigger has a dedicated toggle in the options panel (both enabled by default).
-- **Decimal Item Level**: Replaces the character sheet item level display with a two-decimal-precision value. Shows equipped item level alongside the overall average in the tooltip, and includes PvP item level when it differs.
-- **Inspect Item Level**: When inspecting another player, their item level is shown as a gold number overlay in the bottom-left corner of the Inspect frame.
+- **Decimal Item Level**: Replaces the character sheet item level display with a two-decimal-precision value. Shows equipped item level alongside the overall average in the tooltip, and includes PvP item level when it differs. (configurable, enabled by default)
+- **Inspect Item Level**: When inspecting another player, their item level is shown as a gold number overlay in the bottom-left corner of the Inspect frame. (configurable, enabled by default)
 
 All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
 
@@ -42,14 +42,15 @@ The addon is modularized across 8 Lua files for clean separation of concerns:
 
 ### **DyBOptions.lua**
 - Registers the settings category using the `Settings` API
-- Creates six checkbox options with tooltips
+- Creates nine checkbox options with tooltips
 - Initializes saved variables on `ADDON_LOADED`
 - Manages setting callbacks for immediate UI updates
 
 ### **DybPullTimer.lua**
 - Register a `/pull` command to trigger pull countdown
 - Use `/pull 0` to cancel pull countdown
-- Check for party leaderer / raid leader/co-leader role
+- Check for party leader / raid leader/co-leader role
+- Guards execution & command registration with `pullTimer` saved variable; exposes `DyBAddon.OnPullTimerChanged()` callback
 
 ### **DyBMeterReset.lua**
 - Listens to `GROUP_ROSTER_UPDATE` to detect when the player newly joins a group
@@ -64,12 +65,13 @@ The addon is modularized across 8 Lua files for clean separation of concerns:
 - Rounds average, equipped, and PvP item levels to two decimal places
 - Displays the equipped item level in the tooltip alongside the overall average
 - Appends PvP item level to the tooltip when it differs from the average
-- No SavedVariables or options panel integration; always active
+- Respects the `decimalItemLevel` saved variable; exposes `DyBAddon.OnDecimalItemLevelChanged()` callback
+- When disabled, the hook returns early and lets Blizzard render the stat frame normally
 
 ### **DybInspectItemLevel.lua**
 - Listens to `INSPECT_READY` to render a gold item level overlay in the bottom-left corner of `InspectFrame` when viewing another player
 - Uses `C_PaperDollInfo.GetInspectItemLevel(InspectFrame.unit)` to retrieve the inspected player's item level
-- No SavedVariables or options panel integration; always active
+- Respects the `inspectItemLevel` saved variable; exposes `DyBAddon.OnInspectItemLevelChanged()` callback that immediately hides the overlay when disabled
 
 ### **DyBAddon.toc**
 - Addon manifest with metadata

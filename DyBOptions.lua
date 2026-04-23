@@ -72,5 +72,35 @@ f:SetScript("OnEvent", function(self, event, addonName)
             "Propose le reset du recount à l'entrée d'une instance.")
     end
 
+    do
+        local setting = Settings.RegisterAddOnSetting(category,
+            "DyBAddon_PullTimer", "pullTimer",
+            DyBAddon_SavedVars, type(true),
+            "Commande /pull", true)
+        setting:SetValueChangedCallback(DyBAddon.OnPullTimerChanged)
+        Settings.CreateCheckbox(category, setting,
+            "Active la commande /pull pour lancer un compte à rebours de pull.")
+    end
+
+    do
+        local setting = Settings.RegisterAddOnSetting(category,
+            "DyBAddon_InspectItemLevel", "inspectItemLevel",
+            DyBAddon_SavedVars, type(true),
+            "Afficher l'iLvl à l'inspection", true)
+        setting:SetValueChangedCallback(DyBAddon.OnInspectItemLevelChanged)
+        Settings.CreateCheckbox(category, setting,
+            "Affiche l'iLvl du joueur inspecté dans la fenêtre d'inspection.")
+    end
+
+    do
+        local setting = Settings.RegisterAddOnSetting(category,
+            "DyBAddon_DecimalItemLevel", "decimalItemLevel",
+            DyBAddon_SavedVars, type(true),
+            "Décimales dans son iLvl", true)
+        setting:SetValueChangedCallback(DyBAddon.OnDecimalItemLevelChanged)
+        Settings.CreateCheckbox(category, setting,
+            "Affiche votre iLvl avec deux décimales sur la fiche de personnage.")
+    end
+
     Settings.RegisterAddOnCategory(category)
 end)

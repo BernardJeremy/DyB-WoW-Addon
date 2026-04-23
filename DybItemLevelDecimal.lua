@@ -7,6 +7,10 @@ function DecimalItemLevel:RoundNumberWithDecimals(number, decimals)
 end
 
 hooksecurefunc('PaperDollFrame_SetItemLevel', function(statFrame, unit)
+	if DyBAddon_SavedVars and DyBAddon_SavedVars.decimalItemLevel == false then
+		return
+	end
+
 	if ( unit ~= "player" ) then
 		statFrame:Hide()
 		return
@@ -34,3 +38,9 @@ hooksecurefunc('PaperDollFrame_SetItemLevel', function(statFrame, unit)
 		statFrame.tooltip2 = statFrame.tooltip2 .. "\n\n" .. ("PvP Item Level: %.2f"):format(avgItemLevelPvP)
 	end
 end)
+
+-- Callback for options --------------------------------------------------------
+
+function DyBAddon.OnDecimalItemLevelChanged(_, value)
+    -- Takes effect on next character frame open
+end

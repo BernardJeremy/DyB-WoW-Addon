@@ -13,33 +13,52 @@ local function CanTriggerCountdown()
     return false
 end
 
-SLASH_DYBPULL1 = "/pull"
+local function RegisterPullCommand()
+    SLASH_DYBPULL1 = "/pull"
+    SlashCmdList["DYBPULL"] = function(msg)
+        local trimmed = msg and msg:match("^%s*(.-)%s*$") or ""
 
-SlashCmdList["DYBPULL"] = function(msg)
-    local trimmed = msg and msg:match("^%s*(.-)%s*$") or ""
+        if trimmed == "" then
+            print(ADDON_PREFIX .. "Usage: /pull <secondes> — Lance le compte à rebours de pull. Utilisez 0 pour annuler.")
+            return
+        end
 
-    if trimmed == "" then
-        print(ADDON_PREFIX .. "Usage: /pull <secondes> — Lance le compte à rebours de pull. Utilisez 0 pour annuler.")
-        return
+        local seconds = tonumber(trimmed)
+        if not seconds or seconds ~= math.floor(seconds) or seconds < 0 then
+            print(ADDON_PREFIX .. "|cFFFF0000Erreur :|r Paramètre invalide. Utilisez un nombre entier positif (ex: /pull 5) ou 0 pour annuler.")
+            return
+        end
+
+        if not CanTriggerCountdown() then
+            print(ADDON_PREFIX .. "|cFFFF0000Erreur :|r Vous devez être chef de groupe, chef de raid ou officier de raid pour lancer le compte à rebours.")
+            return
+        end
+
+        -- Reference: https://warcraft.wiki.gg/wiki/API_C_PartyInfo.DoCountdown
+        C_PartyInfo.DoCountdown(seconds)
+
+        if seconds == 0 then
+            print(ADDON_PREFIX .. "Compte à rebours de pull annulé.")
+        else
+            print(ADDON_PREFIX .. "Compte à rebours de pull lancé : " .. seconds .. " seconde" .. (seconds > 1 and "s" or "") .. ".")
+        end
     end
+end
 
-    local seconds = tonumber(trimmed)
-    if not seconds or seconds ~= math.floor(seconds) or seconds < 0 then
-        print(ADDON_PREFIX .. "|cFFFF0000Erreur :|r Paramètre invalide. Utilisez un nombre entier positif (ex: /pull 5) ou 0 pour annuler.")
-        return
-    end
+local pullTimerInitFrame = CreateFrame("Frame")
+-- Reason: SavedVariables are available at ADDON_LOADED; only register /pull if the option is enabled
+pullTimerInitFrame:RegisterEvent("ADDON_LOADED")
+pullTimerInitFrame:SetScript("OnEvent", function(self, event, addonName)
+    if addonName ~= "DyBAddon" then return end
+    self:UnregisterEvent("ADDON_LOADED")
+    -- Default to true if the key is absent (first load before Options initialises defaults)
+    if DyBAddon_SavedVars and DyBAddon_SavedVars.pullTimer == false then return end
+    RegisterPullCommand()
+end)
 
-    if not CanTriggerCountdown() then
-        print(ADDON_PREFIX .. "|cFFFF0000Erreur :|r Vous devez être chef de groupe, chef de raid ou officier de raid pour lancer le compte à rebours.")
-        return
-    end
+-- Callback for options --------------------------------------------------------
 
-    -- Reference: https://warcraft.wiki.gg/wiki/API_C_PartyInfo.DoCountdown
-    C_PartyInfo.DoCountdown(seconds)
-
-    if seconds == 0 then
-        print(ADDON_PREFIX .. "Compte à rebours de pull annulé.")
-    else
-        print(ADDON_PREFIX .. "Compte à rebours de pull lancé : " .. seconds .. " seconde" .. (seconds > 1 and "s" or "") .. ".")
-    end
+function DyBAddon.OnPullTimerChanged(_, value)
+    -- The /pull command is registered at load time; a /reload is required for changes to take effect
+    print(ADDON_PREFIX .. "Le changement de cette option prendra effet au prochain chargement de l'interface (/reload).")
 end

@@ -13,6 +13,11 @@ local function UpdateInspectItemLevel()
 	local text = GetOrCreateInspectIlvlText()
 	if not text then return end
 
+	if DyBAddon_SavedVars and DyBAddon_SavedVars.inspectItemLevel == false then
+		text:Hide()
+		return
+	end
+
 	-- Reference: https://warcraft.wiki.gg/wiki/API_C_PaperDollInfo.GetInspectItemLevel
 	-- InspectFrame.unit is set by Blizzard to the currently inspected player's unit ID
 	local unit = InspectFrame and InspectFrame.unit
@@ -34,3 +39,11 @@ inspectEventFrame:SetScript("OnEvent", function(self, event)
 		UpdateInspectItemLevel()
 	end
 end)
+
+-- Callback for options --------------------------------------------------------
+
+function DyBAddon.OnInspectItemLevelChanged(_, value)
+	if not value and inspectIlvlText then
+		inspectIlvlText:Hide()
+	end
+end
