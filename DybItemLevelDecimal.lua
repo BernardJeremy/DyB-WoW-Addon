@@ -6,7 +6,6 @@ function DecimalItemLevel:RoundNumberWithDecimals(number, decimals)
     return math.floor(number * multiplier + 0.5)/multiplier
 end
 
-_G.MIN_PLAYER_LEVEL_FOR_ITEM_LEVEL_DISPLAY = 1
 hooksecurefunc('PaperDollFrame_SetItemLevel', function(statFrame, unit)
 	if ( unit ~= "player" ) then
 		statFrame:Hide()
