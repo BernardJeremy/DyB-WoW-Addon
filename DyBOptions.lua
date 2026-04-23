@@ -26,7 +26,7 @@ f:SetScript("OnEvent", function(self, event, addonName)
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_HideNpcBubbles", "hideNpcBubbles",
             DyBAddon_SavedVars, type(false),
-            "Masquer les bulles de discussion", false)
+            "Masquer les bulles", false)
         setting:SetValueChangedCallback(DyBAddon.OnHideBubblesChanged)
         Settings.CreateCheckbox(category, setting,
             "Masque toutes les bulles de discussion en jeu au-dessus des personnages.")
@@ -36,7 +36,7 @@ f:SetScript("OnEvent", function(self, event, addonName)
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_GroupInspect", "groupInspect",
             DyBAddon_SavedVars, type(true),
-            "Inspecter les membres du groupe", true)
+            "Print les membres du groupe", true)
         setting:SetValueChangedCallback(DyBAddon.OnGroupInspectChanged)
         Settings.CreateCheckbox(category, setting,
             "Affiche les informations des nouveaux membres du groupe dans le tchat.")
@@ -46,7 +46,7 @@ f:SetScript("OnEvent", function(self, event, addonName)
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_GroupInspectRaid", "groupInspectRaid",
             DyBAddon_SavedVars, type(false),
-            "Activer l'inspection en raid", false)
+            "Print inspection en raid", false)
         setting:SetValueChangedCallback(DyBAddon.OnGroupInspectRaidChanged)
         Settings.CreateCheckbox(category, setting,
             "L'inspection des membres fonctionne également dans les groupes de raid.")
@@ -56,7 +56,7 @@ f:SetScript("OnEvent", function(self, event, addonName)
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_MeterResetOnGroup", "meterResetOnGroup",
             DyBAddon_SavedVars, type(true),
-            "Proposer la RaZ des compteurs (groupe)", true)
+            "Proposer RaZ (groupe)", true)
         setting:SetValueChangedCallback(DyBAddon.OnMeterResetOnGroupChanged)
         Settings.CreateCheckbox(category, setting,
             "Propose le reset du recount lorsque vous rejoignez un groupe.")
@@ -66,7 +66,7 @@ f:SetScript("OnEvent", function(self, event, addonName)
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_MeterResetOnInstance", "meterResetOnInstance",
             DyBAddon_SavedVars, type(true),
-            "Proposer la RaZ des compteurs (instance)", true)
+            "Proposer RaZ (instance)", true)
         setting:SetValueChangedCallback(DyBAddon.OnMeterResetOnInstanceChanged)
         Settings.CreateCheckbox(category, setting,
             "Propose le reset du recount à l'entrée d'une instance.")
