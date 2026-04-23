@@ -9,13 +9,14 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 - **Group Inspector**: When joining a group or when a new member arrives, logs each member's race (with icon), class (with icon), specialization (with icon), and item level to your chat window (configurable, enabled by default). A separate option controls whether inspection runs in raid groups (disabled by default).
 - **Pull Timer**: Launch an in-game countdown for the whole group using `/pull <seconds>`. Requires party/raid leader or raid officer status (or none if solo). Use `/pull 0` to cancel the countdown.
 - **Combat Meter Reset Prompt**: Displays a Yes/No popup offering to reset all combat sessions (`C_DamageMeter.ResetAllCombatSessions()`) when joining a group and/or entering an instance. Each trigger has a dedicated toggle in the options panel (both enabled by default).
-- **Decimal Item Level**: Replaces the character sheet item level display with a two-decimal-precision value. Shows equipped item level alongside the overall average in the tooltip, and includes PvP item level when it differs. Active for all player levels.
+- **Decimal Item Level**: Replaces the character sheet item level display with a two-decimal-precision value. Shows equipped item level alongside the overall average in the tooltip, and includes PvP item level when it differs.
+- **Inspect Item Level**: When inspecting another player, their item level is shown as a gold number overlay in the bottom-left corner of the Inspect frame.
 
 All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
 
 ## Architecture
 
-The addon is modularized across 7 Lua files for clean separation of concerns:
+The addon is modularized across 8 Lua files for clean separation of concerns:
 
 ### **DyBCore.lua**
 - Defines the `DyBAddon` namespace table
@@ -60,10 +61,14 @@ The addon is modularized across 7 Lua files for clean separation of concerns:
 
 ### **DybItemLevelDecimal.lua**
 - Hooks `PaperDollFrame_SetItemLevel` via `hooksecurefunc` to override the character sheet item level display
-- Sets `MIN_PLAYER_LEVEL_FOR_ITEM_LEVEL_DISPLAY` to `1` so the stat shows at all levels
 - Rounds average, equipped, and PvP item levels to two decimal places
 - Displays the equipped item level in the tooltip alongside the overall average
 - Appends PvP item level to the tooltip when it differs from the average
+- No SavedVariables or options panel integration; always active
+
+### **DybInspectItemLevel.lua**
+- Listens to `INSPECT_READY` to render a gold item level overlay in the bottom-left corner of `InspectFrame` when viewing another player
+- Uses `C_PaperDollInfo.GetInspectItemLevel(InspectFrame.unit)` to retrieve the inspected player's item level
 - No SavedVariables or options panel integration; always active
 
 ### **DyBAddon.toc**

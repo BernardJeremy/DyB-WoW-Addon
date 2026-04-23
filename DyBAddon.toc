@@ -13,4 +13,5 @@ DyBGroupInspector.lua
 DyBPullTimer.lua
 DyBMeterReset.lua
 DybItemLevelDecimal.lua
+DybInspectItemLevel.lua
 DyBOptions.lua

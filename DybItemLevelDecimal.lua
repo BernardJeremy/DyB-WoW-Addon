@@ -14,7 +14,7 @@ hooksecurefunc('PaperDollFrame_SetItemLevel', function(statFrame, unit)
 
 	local avgItemLevel, avgItemLevelEquipped, avgItemLevelPvP = GetAverageItemLevel()
 	local minItemLevel = C_PaperDollInfo.GetMinItemLevel()
-	
+
 	avgItemLevel = DecimalItemLevel:RoundNumberWithDecimals(avgItemLevel, 2)
 	avgItemLevelEquipped = DecimalItemLevel:RoundNumberWithDecimals(avgItemLevelEquipped, 2)
 	avgItemLevelPvP = DecimalItemLevel:RoundNumberWithDecimals(avgItemLevelPvP, 2)
