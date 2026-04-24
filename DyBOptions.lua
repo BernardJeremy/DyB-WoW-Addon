@@ -10,7 +10,12 @@ f:SetScript("OnEvent", function(self, event, addonName)
         DyBAddon_SavedVars = {}
     end
 
+    -- Reference: https://warcraft.wiki.gg/wiki/Settings_API
     local category = Settings.RegisterVerticalLayoutCategory("DyBAddon")
+
+    -- -------------------------------------------------------------------------
+    -- Général (root)
+    -- -------------------------------------------------------------------------
 
     do
         local setting = Settings.RegisterAddOnSetting(category,
@@ -34,46 +39,6 @@ f:SetScript("OnEvent", function(self, event, addonName)
 
     do
         local setting = Settings.RegisterAddOnSetting(category,
-            "DyBAddon_GroupInspect", "groupInspect",
-            DyBAddon_SavedVars, type(true),
-            "Print les membres du groupe", true)
-        setting:SetValueChangedCallback(DyBAddon.OnGroupInspectChanged)
-        Settings.CreateCheckbox(category, setting,
-            "Affiche les informations des nouveaux membres du groupe dans le tchat.")
-    end
-
-    do
-        local setting = Settings.RegisterAddOnSetting(category,
-            "DyBAddon_GroupInspectRaid", "groupInspectRaid",
-            DyBAddon_SavedVars, type(false),
-            "Print inspection en raid", false)
-        setting:SetValueChangedCallback(DyBAddon.OnGroupInspectRaidChanged)
-        Settings.CreateCheckbox(category, setting,
-            "L'inspection des membres fonctionne également dans les groupes de raid.")
-    end
-
-    do
-        local setting = Settings.RegisterAddOnSetting(category,
-            "DyBAddon_MeterResetOnGroup", "meterResetOnGroup",
-            DyBAddon_SavedVars, type(true),
-            "Proposer RaZ (groupe)", true)
-        setting:SetValueChangedCallback(DyBAddon.OnMeterResetOnGroupChanged)
-        Settings.CreateCheckbox(category, setting,
-            "Propose le reset du recount lorsque vous rejoignez un groupe.")
-    end
-
-    do
-        local setting = Settings.RegisterAddOnSetting(category,
-            "DyBAddon_MeterResetOnInstance", "meterResetOnInstance",
-            DyBAddon_SavedVars, type(true),
-            "Proposer RaZ (instance)", true)
-        setting:SetValueChangedCallback(DyBAddon.OnMeterResetOnInstanceChanged)
-        Settings.CreateCheckbox(category, setting,
-            "Propose le reset du recount à l'entrée d'une instance.")
-    end
-
-    do
-        local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_PullTimer", "pullTimer",
             DyBAddon_SavedVars, type(true),
             "Commande /pull", true)
@@ -82,34 +47,89 @@ f:SetScript("OnEvent", function(self, event, addonName)
             "Active la commande /pull pour lancer un compte à rebours de pull.")
     end
 
+    -- -------------------------------------------------------------------------
+    -- Inspection
+    -- -------------------------------------------------------------------------
+    local catInspect = Settings.RegisterVerticalLayoutSubcategory(category, "Inspection")
+
     do
-        local setting = Settings.RegisterAddOnSetting(category,
+        local setting = Settings.RegisterAddOnSetting(catInspect,
+            "DyBAddon_GroupInspect", "groupInspect",
+            DyBAddon_SavedVars, type(true),
+            "Print les membres du groupe", true)
+        setting:SetValueChangedCallback(DyBAddon.OnGroupInspectChanged)
+        Settings.CreateCheckbox(catInspect, setting,
+            "Affiche les informations des nouveaux membres du groupe dans le tchat.")
+    end
+
+    do
+        local setting = Settings.RegisterAddOnSetting(catInspect,
+            "DyBAddon_GroupInspectRaid", "groupInspectRaid",
+            DyBAddon_SavedVars, type(false),
+            "Print inspection en raid", false)
+        setting:SetValueChangedCallback(DyBAddon.OnGroupInspectRaidChanged)
+        Settings.CreateCheckbox(catInspect, setting,
+            "L'inspection des membres fonctionne également dans les groupes de raid.")
+    end
+
+    do
+        local setting = Settings.RegisterAddOnSetting(catInspect,
             "DyBAddon_InspectItemLevel", "inspectItemLevel",
             DyBAddon_SavedVars, type(true),
             "Afficher l'iLvl à l'inspection", true)
         setting:SetValueChangedCallback(DyBAddon.OnInspectItemLevelChanged)
-        Settings.CreateCheckbox(category, setting,
+        Settings.CreateCheckbox(catInspect, setting,
             "Affiche l'iLvl du joueur inspecté dans la fenêtre d'inspection.")
     end
 
+    -- -------------------------------------------------------------------------
+    -- Fiche perso
+    -- -------------------------------------------------------------------------
+    local catChar = Settings.RegisterVerticalLayoutSubcategory(category, "Fiche perso")
+
     do
-        local setting = Settings.RegisterAddOnSetting(category,
+        local setting = Settings.RegisterAddOnSetting(catChar,
             "DyBAddon_DecimalItemLevel", "decimalItemLevel",
             DyBAddon_SavedVars, type(true),
             "Décimales dans son iLvl", true)
         setting:SetValueChangedCallback(DyBAddon.OnDecimalItemLevelChanged)
-        Settings.CreateCheckbox(category, setting,
+        Settings.CreateCheckbox(catChar, setting,
             "Affiche votre iLvl avec deux décimales sur la fiche de personnage.")
     end
 
     do
-        local setting = Settings.RegisterAddOnSetting(category,
+        local setting = Settings.RegisterAddOnSetting(catChar,
             "DyBAddon_ShowDurability", "showDurability",
             DyBAddon_SavedVars, type(true),
             "Afficher la durabilité", true)
         setting:SetValueChangedCallback(DyBAddon.OnShowDurabilityChanged)
-        Settings.CreateCheckbox(category, setting,
+        Settings.CreateCheckbox(catChar, setting,
             "Affiche le pourcentage de durabilité moyen des équipements sur la fiche de personnage.")
+    end
+
+    -- -------------------------------------------------------------------------
+    -- Compteur de dégâts
+    -- -------------------------------------------------------------------------
+    local catMeter = Settings.RegisterVerticalLayoutSubcategory(category, "Compteur de dégâts")
+
+    do
+        local setting = Settings.RegisterAddOnSetting(catMeter,
+            "DyBAddon_MeterResetOnGroup", "meterResetOnGroup",
+            DyBAddon_SavedVars, type(true),
+            "Proposer RaZ (groupe)", true)
+        setting:SetValueChangedCallback(DyBAddon.OnMeterResetOnGroupChanged)
+        Settings.CreateCheckbox(catMeter, setting,
+            "Propose le reset du recount lorsque vous rejoignez un groupe.")
+    end
+
+    do
+        local setting = Settings.RegisterAddOnSetting(catMeter,
+            "DyBAddon_MeterResetOnInstance", "meterResetOnInstance",
+            DyBAddon_SavedVars, type(true),
+            "Proposer RaZ (instance)", true)
+        setting:SetValueChangedCallback(DyBAddon.OnMeterResetOnInstanceChanged)
+        Settings.CreateCheckbox(catMeter, setting,
+            "Propose le reset du recount à l'entrée d'une instance.")
     end
 
     Settings.RegisterAddOnCategory(category)
