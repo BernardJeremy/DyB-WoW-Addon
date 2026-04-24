@@ -102,5 +102,15 @@ f:SetScript("OnEvent", function(self, event, addonName)
             "Affiche votre iLvl avec deux décimales sur la fiche de personnage.")
     end
 
+    do
+        local setting = Settings.RegisterAddOnSetting(category,
+            "DyBAddon_ShowDurability", "showDurability",
+            DyBAddon_SavedVars, type(true),
+            "Afficher la durabilité", true)
+        setting:SetValueChangedCallback(DyBAddon.OnShowDurabilityChanged)
+        Settings.CreateCheckbox(category, setting,
+            "Affiche le pourcentage de durabilité moyen des équipements sur la fiche de personnage.")
+    end
+
     Settings.RegisterAddOnCategory(category)
 end)

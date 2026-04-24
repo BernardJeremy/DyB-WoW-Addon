@@ -11,12 +11,13 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 - **Combat Meter Reset Prompt**: Displays a Yes/No popup offering to reset all combat sessions (`C_DamageMeter.ResetAllCombatSessions()`) when joining a group and/or entering an instance. Each trigger has a dedicated toggle in the options panel (both enabled by default).
 - **Decimal Item Level**: Replaces the character sheet item level display with a two-decimal-precision value. Shows equipped item level alongside the overall average in the tooltip, and includes PvP item level when it differs. (configurable, enabled by default)
 - **Inspect Item Level**: When inspecting another player, their item level is shown as a gold number overlay in the bottom-left corner of the Inspect frame. (configurable, enabled by default)
+- **Durability Display**: Shows the average item durability percentage (sum of current / sum of max across all equipped items) in the top-left area of the character frame header, between the class/spec icon and the class/spec name. The percentage is color-coded: green (≥60%), gold (30–59%), red (<30%). (configurable, enabled by default)
 
 All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
 
 ## Architecture
 
-The addon is modularized across 8 Lua files for clean separation of concerns:
+The addon is modularized across 9 Lua files for clean separation of concerns:
 
 ### **DyBCore.lua**
 - Defines the `DyBAddon` namespace table
@@ -40,9 +41,16 @@ The addon is modularized across 8 Lua files for clean separation of concerns:
 - Exposes `DyBAddon.OnGroupInspectChanged()` and `DyBAddon.OnGroupInspectRaidChanged()` callbacks
 - Offers a slash command `/info` to log up to date group members info
 
+### **DyBDurability.lua**
+- Hooks `CharacterFrame.OnShow` on `PLAYER_LOGIN` to refresh the display whenever the character frame is opened
+- Listens to `UPDATE_INVENTORY_DURABILITY` and `PLAYER_EQUIPMENT_CHANGED` to keep the value up to date while the frame is visible
+- Iterates equipment slots 1–17 via `GetInventoryItemDurability(slot)` to compute the ratio of total current over total max durability
+- Renders the percentage as a color-coded `FontString` anchored to the right of `CharacterFramePortrait` (green ≥60%, gold 30–59%, red <30%)
+- Respects the `showDurability` saved variable; exposes `DyBAddon.OnShowDurabilityChanged()` callback for real-time toggling
+
 ### **DyBOptions.lua**
 - Registers the settings category using the `Settings` API
-- Creates nine checkbox options with tooltips
+- Creates ten checkbox options with tooltips
 - Initializes saved variables on `ADDON_LOADED`
 - Manages setting callbacks for immediate UI updates
 
