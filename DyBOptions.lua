@@ -47,6 +47,16 @@ f:SetScript("OnEvent", function(self, event, addonName)
             "Active la commande /pull pour lancer un compte à rebours de pull.")
     end
 
+    do
+        local setting = Settings.RegisterAddOnSetting(category,
+            "DyBAddon_ReadyCheckConsumables", "readyCheckConsumables",
+            DyBAddon_SavedVars, type(true),
+            "Check consommables (ready check)", true)
+        setting:SetValueChangedCallback(DyBAddon.OnReadyCheckConsumablesChanged)
+        Settings.CreateCheckbox(category, setting,
+            "Affiche un résumé des consommables (fiole, repas, arme) lors d'un ready check en instance.")
+    end
+
     -- -------------------------------------------------------------------------
     -- Inspection
     -- -------------------------------------------------------------------------

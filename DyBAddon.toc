@@ -15,4 +15,5 @@ DyBMeterReset.lua
 DybItemLevelDecimal.lua
 DybInspectItemLevel.lua
 DyBDurability.lua
+DyBReadyCheckConsumables.lua
 DyBOptions.lua

@@ -12,12 +12,13 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 - **Decimal Item Level**: Replaces the character sheet item level display with a two-decimal-precision value. Shows equipped item level alongside the overall average in the tooltip, and includes PvP item level when it differs. (configurable, enabled by default)
 - **Inspect Item Level**: When inspecting another player, their item level is shown as a gold number overlay in the bottom-left corner of the Inspect frame. (configurable, enabled by default)
 - **Durability Display**: Shows the average item durability percentage (sum of current / sum of max across all equipped items) in the top-left area of the character frame header, between the class/spec icon and the class/spec name. The percentage is color-coded: green (≥60%), gold (30–59%), red (<30%). (configurable, enabled by default)
+- **Ready Check Consumable Check**: When a ready check is triggered inside an instance, displays a small popup centered horizontally at 33% from the top of the screen. Three icons indicate whether the player has an active Flask, Food buff, and Weapon enchant. Each icon shows a green checkmark if the buff is present or is desaturated with a red cross if missing. The popup can be dismissed at any time via the X button in the top-left corner. While visible, icons update live as buffs are gained or lost. (configurable, enabled by default)
 
 All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
 
 ## Architecture
 
-The addon is modularized across 9 Lua files for clean separation of concerns:
+The addon is modularized across 11 Lua files for clean separation of concerns:
 
 ### **DyBCore.lua**
 - Defines the `DyBAddon` namespace table
@@ -81,6 +82,15 @@ The addon is modularized across 9 Lua files for clean separation of concerns:
 - Uses `C_PaperDollInfo.GetInspectItemLevel(InspectFrame.unit)` to retrieve the inspected player's item level
 - Respects the `inspectItemLevel` saved variable; exposes `DyBAddon.OnInspectItemLevelChanged()` callback that immediately hides the overlay when disabled
 
+### **DyBReadyCheckConsumables.lua**
+- Listens to the `READY_CHECK` event; ignores it when outside an instance or when the feature is disabled
+- Checks for flask buffs by spell ID (`C_UnitAuras.GetAuraDataByIndex`), food buffs by icon file ID 136000 (the shared "Well Fed" icon), and main-hand weapon enchant via `GetWeaponEnchantInfo()`
+- Renders a small `BackdropTemplate` popup centered horizontally with its top edge at 33% from the screen top
+- Each of the three category icons (Flask, Food, Weapon) is shown normally with a green checkmark when the buff is active, or desaturated with a red cross when missing
+- The popup is dismissible at any time via an X button in the top-left corner
+- While the popup is visible, listens to `UNIT_AURA` (flask/food buff changes) and `PLAYER_EQUIPMENT_CHANGED` (weapon enchant changes) to keep icons up to date in real time; both events are unregistered when the popup is hidden to avoid unnecessary overhead
+- Exposes `DyBAddon.OnReadyCheckConsumablesChanged()` callback for real-time option toggling
+
 ### **DyBAddon.toc**
 - Addon manifest with metadata
 - Declares `DyBAddon_SavedVars` as saved variables
@@ -93,7 +103,9 @@ The addon is modularized across 9 Lua files for clean separation of concerns:
 3. **PLAYER_LOGIN**: CVar-based features apply their settings
 4. **GROUP_ROSTER_UPDATE**: Group inspector detects new members and queues inspections
 5. **INSPECT_READY**: Inspect results are received and printed to chat
-6. **Option Toggling**: Callbacks fire immediately when user changes settings in-game
+6. **READY_CHECK**: Consumable popup is shown when inside an instance
+7. **UNIT_AURA / PLAYER_EQUIPMENT_CHANGED**: Consumable icons refresh live while the popup is visible
+8. **Option Toggling**: Callbacks fire immediately when user changes settings in-game
 
 ## Compatibility
 
