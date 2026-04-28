@@ -39,16 +39,6 @@ f:SetScript("OnEvent", function(self, event, addonName)
 
     do
         local setting = Settings.RegisterAddOnSetting(category,
-            "DyBAddon_PullTimer", "pullTimer",
-            DyBAddon_SavedVars, type(true),
-            "Commande /pull", true)
-        setting:SetValueChangedCallback(DyBAddon.OnPullTimerChanged)
-        Settings.CreateCheckbox(category, setting,
-            "Active la commande /pull pour lancer un compte à rebours de pull.")
-    end
-
-    do
-        local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_ReadyCheckConsumables", "readyCheckConsumables",
             DyBAddon_SavedVars, type(true),
             "Check consommables (ready check)", true)

@@ -7,8 +7,6 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 - **Force 24-Hour Clock**: Automatically enables 24-hour military time format on login (configurable, enabled by default)
 - **Hide NPC Chat Bubbles**: Toggle to hide all in-game chat bubbles above characters (configurable, disabled by default)
 - **Group Inspector**: When joining a group or when a new member arrives, logs each member's race (with icon), class (with icon), specialization (with icon), and item level to your chat window (configurable, enabled by default). A separate option controls whether inspection runs in raid groups (disabled by default).
-- **Pull Timer**: Launch an in-game countdown for the whole group using `/pull <seconds>`. Requires party/raid leader or raid officer status (or none if solo). Use `/pull 0` to cancel the countdown. (configurable, enabled by default)
-- **Combat Meter Reset Prompt**: Displays a Yes/No popup offering to reset all combat sessions (`C_DamageMeter.ResetAllCombatSessions()`) when joining a group and/or entering an instance. Each trigger has a dedicated toggle in the options panel (both enabled by default).
 - **Decimal Item Level**: Replaces the character sheet item level display with a two-decimal-precision value. Shows equipped item level alongside the overall average in the tooltip, and includes PvP item level when it differs. (configurable, enabled by default)
 - **Inspect Item Level**: When inspecting another player, their item level is shown as a gold number overlay in the bottom-left corner of the Inspect frame. (configurable, enabled by default)
 - **Durability Display**: Shows the average item durability percentage (sum of current / sum of max across all equipped items) in the top-left area of the character frame header, between the class/spec icon and the class/spec name. The percentage is color-coded: green (≥60%), gold (30–59%), red (<30%). (configurable, enabled by default)
@@ -55,12 +53,6 @@ The addon is modularized across 12 Lua files for clean separation of concerns:
 - Creates ten checkbox options with tooltips
 - Initializes saved variables on `ADDON_LOADED`
 - Manages setting callbacks for immediate UI updates
-
-### **DyBPullTimer.lua**
-- Register a `/pull` command to trigger pull countdown
-- Use `/pull 0` to cancel pull countdown
-- Check for party leader / raid leader/co-leader role
-- Guards execution & command registration with `pullTimer` saved variable; exposes `DyBAddon.OnPullTimerChanged()` callback
 
 ### **DyBCombatTimer.lua**
 - Listens to `PLAYER_REGEN_DISABLED` to reset and start the timer on combat entry
