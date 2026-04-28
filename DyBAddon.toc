@@ -11,6 +11,7 @@ DyBClockFixer.lua
 DyBBubbleHider.lua
 DyBGroupInspector.lua
 DyBPullTimer.lua
+DyBCombatTimer.lua
 DyBMeterReset.lua
 DybItemLevelDecimal.lua
 DybInspectItemLevel.lua

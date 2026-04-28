@@ -57,6 +57,16 @@ f:SetScript("OnEvent", function(self, event, addonName)
             "Affiche un résumé des consommables (fiole, repas, arme) lors d'un ready check en instance.")
     end
 
+    do
+        local setting = Settings.RegisterAddOnSetting(category,
+            "DyBAddon_CombatTimer", "combatTimer",
+            DyBAddon_SavedVars, type(true),
+            "Chrono de combat", true)
+        setting:SetValueChangedCallback(DyBAddon.OnCombatTimerChanged)
+        Settings.CreateCheckbox(category, setting,
+            "Affiche un chrono déplaçable affichant le temps écoulé en combat. Shift + Click gauche pour déplacer.")
+    end
+
     -- -------------------------------------------------------------------------
     -- Inspection
     -- -------------------------------------------------------------------------

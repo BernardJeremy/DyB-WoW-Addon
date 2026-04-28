@@ -13,12 +13,13 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 - **Inspect Item Level**: When inspecting another player, their item level is shown as a gold number overlay in the bottom-left corner of the Inspect frame. (configurable, enabled by default)
 - **Durability Display**: Shows the average item durability percentage (sum of current / sum of max across all equipped items) in the top-left area of the character frame header, between the class/spec icon and the class/spec name. The percentage is color-coded: green (≥60%), gold (30–59%), red (<30%). (configurable, enabled by default)
 - **Ready Check Consumable Check**: When a ready check is triggered inside an instance, displays a small popup centered horizontally at 33% from the top of the screen. Three icons indicate whether the player has an active Flask, Food buff, and Weapon enchant. Each icon shows a green checkmark if the buff is present or is desaturated with a red cross if missing. The popup can be dismissed at any time via the X button in the top-left corner. While visible, icons update live as buffs are gained or lost. (configurable, enabled by default)
+- **Combat Timer**: Displays a small, movable window showing the elapsed time since the start of the current combat in `mm:ss.c` format (tenths of a second). The timer resets automatically each time combat begins and freezes when combat ends, keeping the last value visible. Window position is saved across sessions. (configurable, enabled by default)
 
 All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
 
 ## Architecture
 
-The addon is modularized across 11 Lua files for clean separation of concerns:
+The addon is modularized across 12 Lua files for clean separation of concerns:
 
 ### **DyBCore.lua**
 - Defines the `DyBAddon` namespace table
@@ -55,11 +56,18 @@ The addon is modularized across 11 Lua files for clean separation of concerns:
 - Initializes saved variables on `ADDON_LOADED`
 - Manages setting callbacks for immediate UI updates
 
-### **DybPullTimer.lua**
+### **DyBPullTimer.lua**
 - Register a `/pull` command to trigger pull countdown
 - Use `/pull 0` to cancel pull countdown
 - Check for party leader / raid leader/co-leader role
 - Guards execution & command registration with `pullTimer` saved variable; exposes `DyBAddon.OnPullTimerChanged()` callback
+
+### **DyBCombatTimer.lua**
+- Listens to `PLAYER_REGEN_DISABLED` to reset and start the timer on combat entry
+- Listens to `PLAYER_REGEN_ENABLED` to freeze the display on combat exit
+- Renders elapsed time as `mm:ss.c` (tenths of a second) in a white-on-black draggable frame
+- Saves and restores window position via `DyBAddon_SavedVars.combatTimerPos`
+- Respects the `combatTimer` saved variable; exposes `DyBAddon.OnCombatTimerChanged()` callback for real-time show/hide toggling
 
 ### **DyBMeterReset.lua**
 - Listens to `GROUP_ROSTER_UPDATE` to detect when the player newly joins a group
@@ -105,7 +113,8 @@ The addon is modularized across 11 Lua files for clean separation of concerns:
 5. **INSPECT_READY**: Inspect results are received and printed to chat
 6. **READY_CHECK**: Consumable popup is shown when inside an instance
 7. **UNIT_AURA / PLAYER_EQUIPMENT_CHANGED**: Consumable icons refresh live while the popup is visible
-8. **Option Toggling**: Callbacks fire immediately when user changes settings in-game
+8. **PLAYER_REGEN_DISABLED / PLAYER_REGEN_ENABLED**: Combat timer starts/freezes on combat enter/exit
+9. **Option Toggling**: Callbacks fire immediately when user changes settings in-game
 
 ## Compatibility
 
