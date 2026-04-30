@@ -486,14 +486,26 @@ end)
 
 -- Defer initial positioning until DyBAddon's SavedVariables are loaded
 local mmInitFrame = CreateFrame("Frame")
--- Reason: Read the saved minimap angle once DyBAddon's SavedVariables are available
+-- Reason: Read the saved minimap angle and visibility once DyBAddon's SavedVariables are available
 mmInitFrame:RegisterEvent("ADDON_LOADED")
 mmInitFrame:SetScript("OnEvent", function(self, event, addonName)
     if addonName ~= "DyBAddon" then return end
     self:UnregisterEvent("ADDON_LOADED")
     local angle = (DyBAddon_SavedVars and DyBAddon_SavedVars.minimapAngle) or 225
     SetMinimapButtonPosition(angle)
+    local show = DyBAddon_SavedVars and DyBAddon_SavedVars.minimapReadyCheckConsumables
+    if show == nil then show = true end  -- default on
+    if show then minimapBtn:Show() else minimapBtn:Hide() end
 end)
+
+-- Callback exposed to the options panel for the minimap button toggle
+function DyBAddon.OnMinimapReadyCheckConsumablesChanged(_, value)
+    if value then
+        minimapBtn:Show()
+    else
+        minimapBtn:Hide()
+    end
+end
 
 -- ---- Live buff tracking while the popup is visible ----
 -- Register UNIT_AURA (flask / food aura changes) and PLAYER_EQUIPMENT_CHANGED

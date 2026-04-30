@@ -39,16 +39,6 @@ f:SetScript("OnEvent", function(self, event, addonName)
 
     do
         local setting = Settings.RegisterAddOnSetting(category,
-            "DyBAddon_ReadyCheckConsumables", "readyCheckConsumables",
-            DyBAddon_SavedVars, type(true),
-            "Check consommables (ready check)", true)
-        setting:SetValueChangedCallback(DyBAddon.OnReadyCheckConsumablesChanged)
-        Settings.CreateCheckbox(category, setting,
-            "Affiche un résumé des consommables (fiole, repas, arme) lors d'un ready check en instance.")
-    end
-
-    do
-        local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_CombatTimer", "combatTimer",
             DyBAddon_SavedVars, type(true),
             "Chrono de combat", true)
@@ -140,6 +130,31 @@ f:SetScript("OnEvent", function(self, event, addonName)
         setting:SetValueChangedCallback(DyBAddon.OnMeterResetOnInstanceChanged)
         Settings.CreateCheckbox(catMeter, setting,
             "Propose le reset du recount à l'entrée d'une instance.")
+    end
+
+    -- -------------------------------------------------------------------------
+    -- Buff Checker
+    -- -------------------------------------------------------------------------
+    local catBuff = Settings.RegisterVerticalLayoutSubcategory(category, "Buff Checker")
+
+    do
+        local setting = Settings.RegisterAddOnSetting(catBuff,
+            "DyBAddon_ReadyCheckConsumables", "readyCheckConsumables",
+            DyBAddon_SavedVars, type(true),
+            "Check buff (Ready)", true)
+        setting:SetValueChangedCallback(DyBAddon.OnReadyCheckConsumablesChanged)
+        Settings.CreateCheckbox(catBuff, setting,
+            "Affiche un résumé des consommables et des buff de classes lors d'un ready check en instance.")
+    end
+
+    do
+        local setting = Settings.RegisterAddOnSetting(catBuff,
+            "DyBAddon_MinimapReadyCheckConsumables", "minimapReadyCheckConsumables",
+            DyBAddon_SavedVars, type(true),
+            "Check buff (Minimap)", true)
+        setting:SetValueChangedCallback(DyBAddon.OnMinimapReadyCheckConsumablesChanged)
+        Settings.CreateCheckbox(catBuff, setting,
+            "Affiche un résumé des consommables et des buff de classes via un bouton sur la minimap")
     end
 
     Settings.RegisterAddOnCategory(category)
