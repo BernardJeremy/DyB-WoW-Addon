@@ -148,11 +148,8 @@ end
 
 local function IsValidGroupMember(unit)
     local isValid = UnitExists(unit)
-        and not UnitIsDeadOrGhost(unit)
         and UnitIsConnected(unit)
         and UnitCanAssist("player", unit)
-        and UnitIsVisible(unit)
-        and UnitPhaseReason(unit) == nil
     return isValid
 end
 
@@ -226,6 +223,22 @@ popup:SetBackdrop({
 })
 popup:SetBackdropColor(0, 0, 0, 0.85)
 popup:SetBackdropBorderColor(0.6, 0.6, 0.6, 1)
+
+popup:SetMovable(true)
+popup:EnableMouse(true)
+popup:RegisterForDrag("LeftButton")
+
+popup:SetScript("OnDragStart", function(self)
+    self:StartMoving()
+end)
+
+popup:SetScript("OnDragStop", function(self)
+    self:StopMovingOrSizing()
+    if DyBAddon_SavedVars then
+        local point, _, _, x, y = self:GetPoint()
+        DyBAddon_SavedVars.rccPopupPoint = { point = point, x = x, y = y }
+    end
+end)
 
 -- Close button in the top-left corner
 local closeBtn = CreateFrame("Button", nil, popup, "UIPanelCloseButton")
@@ -401,9 +414,14 @@ end
 
 -- Position, fill, and show the popup
 local function ShowConsumableStatus()
-    -- Center horizontally; place the top of the popup at 33% from the screen top
     popup:ClearAllPoints()
-    popup:SetPoint("TOP", UIParent, "TOP", 0, -(UIParent:GetHeight() * 0.33))
+    local saved = DyBAddon_SavedVars and DyBAddon_SavedVars.rccPopupPoint
+    if saved then
+        popup:SetPoint(saved.point, UIParent, saved.point, saved.x, saved.y)
+    else
+        -- Default: center horizontally, top at 33% from the screen top
+        popup:SetPoint("TOP", UIParent, "TOP", 0, -(UIParent:GetHeight() * 0.33))
+    end
     GetGroupMembers()
     UpdatePopupLayout()
     RefreshIcons()
