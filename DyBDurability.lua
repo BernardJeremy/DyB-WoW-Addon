@@ -2,6 +2,8 @@
 -- Displays average item durability percentage in the bottom-left corner
 -- of the character frame, mirroring the inspect item level overlay position.
 
+local L = DyBAddon.L
+
 local durabilityText = nil
 
 local function GetOrCreateDurabilityText()
@@ -45,7 +47,7 @@ local function UpdateDurabilityDisplay()
 
     if totalMax > 0 then
         local pct = math.floor((totalCurrent / totalMax) * 100 + 0.5)
-        text:SetText(string.format("Durabilité : %s%d%%|r", GetDurabilityColor(pct), pct))
+        text:SetText(string.format(L["dur_display"], GetDurabilityColor(pct), pct))
         text:Show()
     else
         text:Hide()

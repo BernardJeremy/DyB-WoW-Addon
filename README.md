@@ -21,13 +21,21 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 
 All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
 
+All user-facing text is **localized**: French (`frFR`) and English are supported. Any other game client language falls back to English automatically.
+
 ## Architecture
 
-The addon is modularized across 12 Lua files for clean separation of concerns:
+The addon is modularized across 13 Lua files for clean separation of concerns:
 
 ### **DyBCore.lua**
 - Defines the `DyBAddon` namespace table
 - Shared module for all features
+
+### **DyBLocales.lua**
+- Defines `DyBAddon.L`, a flat key→string table used by every other module
+- English strings are the default; French (`frFR`) strings override them when `GetLocale() == "frFR"`
+- All other locales fall back to English automatically
+- Loaded immediately after `DyBCore.lua` so strings are available to every subsequent file
 
 ### **DyBClockFixer.lua**
 - Listens to `PLAYER_LOGIN` event
@@ -105,11 +113,11 @@ The addon is modularized across 12 Lua files for clean separation of concerns:
 ### **DyBAddon.toc**
 - Addon manifest with metadata
 - Declares `DyBAddon_SavedVars` as saved variables
-- Specifies load order: Core → Features → Options
+- Specifies load order: Core → Locales → Features → Options
 
 ## Load Sequence
 
-1. **Addon Load**: All `.lua` files loaded in order (Core → Features → Options)
+1. **Addon Load**: All `.lua` files loaded in order (Core → Locales → Features → Options)
 2. **ADDON_LOADED**: Saved variables initialized, settings panel registered
 3. **PLAYER_LOGIN**: CVar-based features apply their settings
 4. **GROUP_ROSTER_UPDATE**: Group inspector detects new members and queues inspections

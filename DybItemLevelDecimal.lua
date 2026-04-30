@@ -1,4 +1,5 @@
 local DecimalItemLevel = {}
+local L = DyBAddon.L
 
 function DecimalItemLevel:RoundNumberWithDecimals(number, decimals)
 	if not number then return nil end
@@ -29,13 +30,13 @@ hooksecurefunc('PaperDollFrame_SetItemLevel', function(statFrame, unit)
 	PaperDollFrame_SetLabelAndText(statFrame, STAT_AVERAGE_ITEM_LEVEL, displayItemLevel, false, displayItemLevel)
 	statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_AVERAGE_ITEM_LEVEL).." "..avgItemLevel
 	if ( displayItemLevel ~= avgItemLevel ) then
-		statFrame.tooltip = statFrame.tooltip .. "  " .. format("(Equipped %.2f)", avgItemLevelEquipped)
+		statFrame.tooltip = statFrame.tooltip .. "  " .. format(L["ilvl_equipped_tooltip"], avgItemLevelEquipped)
 	end
 	statFrame.tooltip = statFrame.tooltip .. FONT_COLOR_CODE_CLOSE
 	statFrame.tooltip2 = STAT_AVERAGE_ITEM_LEVEL_TOOLTIP
 
 	if ( avgItemLevel ~= avgItemLevelPvP ) then
-		statFrame.tooltip2 = statFrame.tooltip2 .. "\n\n" .. ("PvP Item Level: %.2f"):format(avgItemLevelPvP)
+		statFrame.tooltip2 = statFrame.tooltip2 .. "\n\n" .. (L["ilvl_pvp_tooltip"]):format(avgItemLevelPvP)
 	end
 end)
 

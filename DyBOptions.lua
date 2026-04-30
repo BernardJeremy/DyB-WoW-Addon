@@ -1,3 +1,5 @@
+local L = DyBAddon.L
+
 local f = CreateFrame("Frame")
 
 f:RegisterEvent("ADDON_LOADED")
@@ -14,147 +16,135 @@ f:SetScript("OnEvent", function(self, event, addonName)
     local category = Settings.RegisterVerticalLayoutCategory("DyBAddon")
 
     -- -------------------------------------------------------------------------
-    -- Général (root)
+    -- General (root)
     -- -------------------------------------------------------------------------
 
     do
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_ForceMilitaryTime", "forceMilitaryTime",
             DyBAddon_SavedVars, type(true),
-            "Forcer le format 24 heures", true)
+            L["opt_military_time_label"], true)
         setting:SetValueChangedCallback(DyBAddon.OnMilitaryTimeChanged)
-        Settings.CreateCheckbox(category, setting,
-            "Force l'horloge du jeu au format 24 heures à la connexion.")
+        Settings.CreateCheckbox(category, setting, L["opt_military_time_tooltip"])
     end
 
     do
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_HideNpcBubbles", "hideNpcBubbles",
             DyBAddon_SavedVars, type(false),
-            "Masquer les bulles", false)
+            L["opt_hide_bubbles_label"], false)
         setting:SetValueChangedCallback(DyBAddon.OnHideBubblesChanged)
-        Settings.CreateCheckbox(category, setting,
-            "Masque toutes les bulles de discussion en jeu au-dessus des personnages.")
+        Settings.CreateCheckbox(category, setting, L["opt_hide_bubbles_tooltip"])
     end
 
     do
         local setting = Settings.RegisterAddOnSetting(category,
             "DyBAddon_CombatTimer", "combatTimer",
             DyBAddon_SavedVars, type(true),
-            "Chrono de combat", true)
+            L["opt_combat_timer_label"], true)
         setting:SetValueChangedCallback(DyBAddon.OnCombatTimerChanged)
-        Settings.CreateCheckbox(category, setting,
-            "Affiche un chrono déplaçable affichant le temps écoulé en combat. Shift + Click gauche pour déplacer.")
+        Settings.CreateCheckbox(category, setting, L["opt_combat_timer_tooltip"])
     end
 
     -- -------------------------------------------------------------------------
     -- Inspection
     -- -------------------------------------------------------------------------
-    local catInspect = Settings.RegisterVerticalLayoutSubcategory(category, "Inspection")
+    local catInspect = Settings.RegisterVerticalLayoutSubcategory(category, L["opt_category_inspect"])
 
     do
         local setting = Settings.RegisterAddOnSetting(catInspect,
             "DyBAddon_GroupInspect", "groupInspect",
             DyBAddon_SavedVars, type(true),
-            "Print les membres du groupe", true)
+            L["opt_group_inspect_label"], true)
         setting:SetValueChangedCallback(DyBAddon.OnGroupInspectChanged)
-        Settings.CreateCheckbox(catInspect, setting,
-            "Affiche les informations des nouveaux membres du groupe dans le tchat.")
+        Settings.CreateCheckbox(catInspect, setting, L["opt_group_inspect_tooltip"])
     end
 
     do
         local setting = Settings.RegisterAddOnSetting(catInspect,
             "DyBAddon_GroupInspectRaid", "groupInspectRaid",
             DyBAddon_SavedVars, type(false),
-            "Print inspection en raid", false)
+            L["opt_group_inspect_raid_label"], false)
         setting:SetValueChangedCallback(DyBAddon.OnGroupInspectRaidChanged)
-        Settings.CreateCheckbox(catInspect, setting,
-            "L'inspection des membres fonctionne également dans les groupes de raid.")
+        Settings.CreateCheckbox(catInspect, setting, L["opt_group_inspect_raid_tooltip"])
     end
 
     do
         local setting = Settings.RegisterAddOnSetting(catInspect,
             "DyBAddon_InspectItemLevel", "inspectItemLevel",
             DyBAddon_SavedVars, type(true),
-            "Afficher l'iLvl à l'inspection", true)
+            L["opt_inspect_ilvl_label"], true)
         setting:SetValueChangedCallback(DyBAddon.OnInspectItemLevelChanged)
-        Settings.CreateCheckbox(catInspect, setting,
-            "Affiche l'iLvl du joueur inspecté dans la fenêtre d'inspection.")
+        Settings.CreateCheckbox(catInspect, setting, L["opt_inspect_ilvl_tooltip"])
     end
 
     -- -------------------------------------------------------------------------
-    -- Fiche perso
+    -- Character Sheet
     -- -------------------------------------------------------------------------
-    local catChar = Settings.RegisterVerticalLayoutSubcategory(category, "Fiche perso")
+    local catChar = Settings.RegisterVerticalLayoutSubcategory(category, L["opt_category_char"])
 
     do
         local setting = Settings.RegisterAddOnSetting(catChar,
             "DyBAddon_DecimalItemLevel", "decimalItemLevel",
             DyBAddon_SavedVars, type(true),
-            "Décimales dans son iLvl", true)
+            L["opt_decimal_ilvl_label"], true)
         setting:SetValueChangedCallback(DyBAddon.OnDecimalItemLevelChanged)
-        Settings.CreateCheckbox(catChar, setting,
-            "Affiche votre iLvl avec deux décimales sur la fiche de personnage.")
+        Settings.CreateCheckbox(catChar, setting, L["opt_decimal_ilvl_tooltip"])
     end
 
     do
         local setting = Settings.RegisterAddOnSetting(catChar,
             "DyBAddon_ShowDurability", "showDurability",
             DyBAddon_SavedVars, type(true),
-            "Afficher la durabilité", true)
+            L["opt_durability_label"], true)
         setting:SetValueChangedCallback(DyBAddon.OnShowDurabilityChanged)
-        Settings.CreateCheckbox(catChar, setting,
-            "Affiche le pourcentage de durabilité moyen des équipements sur la fiche de personnage.")
+        Settings.CreateCheckbox(catChar, setting, L["opt_durability_tooltip"])
     end
 
     -- -------------------------------------------------------------------------
-    -- Compteur de dégâts
+    -- Damage Meter
     -- -------------------------------------------------------------------------
-    local catMeter = Settings.RegisterVerticalLayoutSubcategory(category, "Compteur de dégâts")
+    local catMeter = Settings.RegisterVerticalLayoutSubcategory(category, L["opt_category_meter"])
 
     do
         local setting = Settings.RegisterAddOnSetting(catMeter,
             "DyBAddon_MeterResetOnGroup", "meterResetOnGroup",
             DyBAddon_SavedVars, type(true),
-            "Proposer RaZ (groupe)", true)
+            L["opt_meter_reset_group_label"], true)
         setting:SetValueChangedCallback(DyBAddon.OnMeterResetOnGroupChanged)
-        Settings.CreateCheckbox(catMeter, setting,
-            "Propose le reset du recount lorsque vous rejoignez un groupe.")
+        Settings.CreateCheckbox(catMeter, setting, L["opt_meter_reset_group_tooltip"])
     end
 
     do
         local setting = Settings.RegisterAddOnSetting(catMeter,
             "DyBAddon_MeterResetOnInstance", "meterResetOnInstance",
             DyBAddon_SavedVars, type(true),
-            "Proposer RaZ (instance)", true)
+            L["opt_meter_reset_instance_label"], true)
         setting:SetValueChangedCallback(DyBAddon.OnMeterResetOnInstanceChanged)
-        Settings.CreateCheckbox(catMeter, setting,
-            "Propose le reset du recount à l'entrée d'une instance.")
+        Settings.CreateCheckbox(catMeter, setting, L["opt_meter_reset_instance_tooltip"])
     end
 
     -- -------------------------------------------------------------------------
     -- Buff Checker
     -- -------------------------------------------------------------------------
-    local catBuff = Settings.RegisterVerticalLayoutSubcategory(category, "Buff Checker")
+    local catBuff = Settings.RegisterVerticalLayoutSubcategory(category, L["opt_category_buff"])
 
     do
         local setting = Settings.RegisterAddOnSetting(catBuff,
             "DyBAddon_ReadyCheckConsumables", "readyCheckConsumables",
             DyBAddon_SavedVars, type(true),
-            "Check buff (Ready)", true)
+            L["opt_ready_check_label"], true)
         setting:SetValueChangedCallback(DyBAddon.OnReadyCheckConsumablesChanged)
-        Settings.CreateCheckbox(catBuff, setting,
-            "Affiche un résumé des consommables et des buff de classes lors d'un ready check en instance.")
+        Settings.CreateCheckbox(catBuff, setting, L["opt_ready_check_tooltip"])
     end
 
     do
         local setting = Settings.RegisterAddOnSetting(catBuff,
             "DyBAddon_MinimapReadyCheckConsumables", "minimapReadyCheckConsumables",
             DyBAddon_SavedVars, type(true),
-            "Check buff (Minimap)", true)
+            L["opt_minimap_btn_label"], true)
         setting:SetValueChangedCallback(DyBAddon.OnMinimapReadyCheckConsumablesChanged)
-        Settings.CreateCheckbox(catBuff, setting,
-            "Affiche un résumé des consommables et des buff de classes via un bouton sur la minimap")
+        Settings.CreateCheckbox(catBuff, setting, L["opt_minimap_btn_tooltip"])
     end
 
     Settings.RegisterAddOnCategory(category)

@@ -7,6 +7,7 @@
 ## SavedVariables: DyBAddon_SavedVars
 
 DyBCore.lua
+DyBLocales.lua
 DyBClockFixer.lua
 DyBBubbleHider.lua
 DyBGroupInspector.lua

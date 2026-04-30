@@ -1,4 +1,5 @@
 local ADDON_PREFIX = "|cFFFFD100[DyBAddon]|r "
+local L = DyBAddon.L
 local ICON_SIZE = 14
 
 local announcedGUIDs = {}
@@ -61,7 +62,7 @@ local function PrintMemberInfo(unit, specID, ilvl)
     if raceIcon ~= "" then icons = raceIcon .. " " end
     icons = icons .. classIcon .. " " .. specIcon
 
-    print(string.format("%s%s %s - %s - iLvl %s",
+    print(string.format("%s%s %s - %s - " .. L["gi_ilvl"],
         ADDON_PREFIX, icons, coloredName, specName, ilvlStr))
 end
 
@@ -187,7 +188,7 @@ end)
 
 local function InspectAllMembers()
     if not IsInGroup() then
-        print(ADDON_PREFIX .. "Vous n'êtes dans aucun groupe.")
+        print(ADDON_PREFIX .. L["gi_not_in_group"])
         return
     end
 
@@ -212,7 +213,7 @@ local function InspectAllMembers()
     end
 
     if #members == 0 then
-        print(ADDON_PREFIX .. "Aucun membre à inspecter.")
+        print(ADDON_PREFIX .. L["gi_no_members"])
         return
     end
 

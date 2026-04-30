@@ -1,15 +1,16 @@
 local ADDON_PREFIX = "|cFFFFD100[DyBAddon]|r "
+local L = DyBAddon.L
 
 -- Reference: https://warcraft.wiki.gg/wiki/API_C_DamageMeter.ResetAllCombatSessions
 -- Reference: https://warcraft.wiki.gg/wiki/API_StaticPopup_Show
 
 StaticPopupDialogs["DYBADDON_RESET_METER"] = {
-    text = "Voulez-vous réinitialiser les compteurs de combat ?",
-    button1 = "Oui",
-    button2 = "Non",
+    text = L["mr_dialog_text"],
+    button1 = L["mr_dialog_yes"],
+    button2 = L["mr_dialog_no"],
     OnAccept = function()
         C_DamageMeter.ResetAllCombatSessions()
-        print(ADDON_PREFIX .. "Compteurs de combat réinitialisés.")
+        print(ADDON_PREFIX .. L["mr_reset_done"])
     end,
     timeout = 0,
     whileDead = false,

@@ -2,6 +2,8 @@
 -- Shows a consumable status popup (flask / food / weapon enchant) when a ready
 -- check fires while the player is inside an instance.
 
+local L = DyBAddon.L
+
 -- Flask buff spell IDs (Midnight 12.0.0)
 -- Reference: https://warcraft.wiki.gg/wiki/API_C_UnitAuras.GetAuraDataByIndex
 local FLASK_SPELL_IDS = {
@@ -202,9 +204,9 @@ local BOTTOM_PAD = 12
 local ROW_GAP    = 10
 
 local CATEGORIES = {
-    { key = "flask",  label = "Flask", icon = "Interface\\Icons\\inv_flask_red" },
-    { key = "food",   label = "Food", icon = "Interface\\Icons\\spell_misc_food" },
-    { key = "weapon", label = "Weapon",  icon = "Interface\\Icons\\inv_12_profession_enchanting_manaoil_purple" },
+    { key = "flask",  label = L["rcc_cat_flask"],  icon = "Interface\\Icons\\inv_flask_red" },
+    { key = "food",   label = L["rcc_cat_food"],   icon = "Interface\\Icons\\spell_misc_food" },
+    { key = "weapon", label = L["rcc_cat_weapon"],  icon = "Interface\\Icons\\inv_12_profession_enchanting_manaoil_purple" },
 }
 
 local FW = #CATEGORIES * ICON_SIZE + (#CATEGORIES - 1) * ICON_PAD + 2 * H_PAD
@@ -476,7 +478,7 @@ end)
 
 minimapBtn:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-    GameTooltip:AddLine("DyBAddon - Buff Checker")
+    GameTooltip:AddLine(L["rcc_minimap_tooltip"])
     GameTooltip:Show()
 end)
 
