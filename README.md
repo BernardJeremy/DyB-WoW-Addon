@@ -10,7 +10,13 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 - **Decimal Item Level**: Replaces the character sheet item level display with a two-decimal-precision value. Shows equipped item level alongside the overall average in the tooltip, and includes PvP item level when it differs. (configurable, enabled by default)
 - **Inspect Item Level**: When inspecting another player, their item level is shown as a gold number overlay in the bottom-left corner of the Inspect frame. (configurable, enabled by default)
 - **Durability Display**: Shows the average item durability percentage (sum of current / sum of max across all equipped items) in the top-left area of the character frame header, between the class/spec icon and the class/spec name. The percentage is color-coded: green (≥60%), gold (30–59%), red (<30%). (configurable, enabled by default)
-- **Ready Check Consumable Check**: When a ready check is triggered inside an instance, displays a small popup centered horizontally at 33% from the top of the screen. Three icons indicate whether the player has an active Flask, Food buff, and Weapon enchant. Each icon shows a green checkmark if the buff is present or is desaturated with a red cross if missing. The popup can be dismissed at any time via the X button in the top-left corner. While visible, icons update live as buffs are gained or lost. (configurable, enabled by default)
+- **Ready Check Consumable Check**: When a ready check is triggered inside an instance, displays a small popup centered horizontally at 33% from the top of the screen. The popup has two rows of icons:
+  - **Row 1 – Consumables**: Flask, Food buff, and Weapon enchant.
+  - **Row 2 – Class buffs**: One icon per class buff provider present in the group (Mage, Warrior, Evoker, Druid, Priest, Shaman). Only classes actually in the group and meeting the required level are shown; both rows are horizontally centered even when they have different widths.
+  - Each icon shows a green checkmark if the buff is present or is desaturated with a red cross if missing. Icons update live while the popup is open.
+  - A **minimap button** (draggable around the minimap edge, position saved across sessions) lets you open the popup at any time without a ready check.
+  - The popup can be dismissed at any time via the X button in its top-left corner.
+  - Both the popup-on-ready-check and the minimap button are independently togglable in the options panel. (both enabled by default)
 - **Combat Timer**: Displays a small, movable window showing the elapsed time since the start of the current combat in `mm:ss.c` format (tenths of a second). The timer resets automatically each time combat begins and freezes when combat ends, keeping the last value visible. Window position is saved across sessions. (configurable, enabled by default)
 
 All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
@@ -50,7 +56,7 @@ The addon is modularized across 12 Lua files for clean separation of concerns:
 
 ### **DyBOptions.lua**
 - Registers the settings category using the `Settings` API
-- Creates ten checkbox options with tooltips
+- Creates eleven checkbox options with tooltips across five subcategories
 - Initializes saved variables on `ADDON_LOADED`
 - Manages setting callbacks for immediate UI updates
 
@@ -85,11 +91,16 @@ The addon is modularized across 12 Lua files for clean separation of concerns:
 ### **DyBReadyCheckConsumables.lua**
 - Listens to the `READY_CHECK` event; ignores it when outside an instance or when the feature is disabled
 - Checks for flask buffs by spell ID (`C_UnitAuras.GetAuraDataByIndex`), food buffs by icon file ID 136000 (the shared "Well Fed" icon), and main-hand weapon enchant via `GetWeaponEnchantInfo()`
-- Renders a small `BackdropTemplate` popup centered horizontally with its top edge at 33% from the screen top
-- Each of the three category icons (Flask, Food, Weapon) is shown normally with a green checkmark when the buff is active, or desaturated with a red cross when missing
+- Scans the group roster (`GetGroupMembers`) to determine which class buff providers are present and at what level; re-scans on `GROUP_ROSTER_UPDATE` while the popup is visible
+- Renders a two-row `BackdropTemplate` popup centered horizontally with its top edge at 33% from the screen top:
+  - Row 1 (consumables): Flask, Food, Weapon — always shown, horizontally centered
+  - Row 2 (class buffs): one icon per relevant class in the group (Mage/Warrior/Evoker/Druid/Priest/Shaman), horizontally centered; row is hidden when no class buffs apply
+- Each icon is shown with a green checkmark when active, or desaturated with a red cross when missing
+- The popup resizes dynamically so both rows always fit and remain centered
 - The popup is dismissible at any time via an X button in the top-left corner
-- While the popup is visible, listens to `UNIT_AURA` (flask/food buff changes) and `PLAYER_EQUIPMENT_CHANGED` (weapon enchant changes) to keep icons up to date in real time; both events are unregistered when the popup is hidden to avoid unnecessary overhead
-- Exposes `DyBAddon.OnReadyCheckConsumablesChanged()` callback for real-time option toggling
+- While visible, listens to `UNIT_AURA`, `PLAYER_EQUIPMENT_CHANGED`, and `GROUP_ROSTER_UPDATE`; all unregistered when the popup is hidden
+- Provides a **minimap button** that rotates around the minimap edge (draggable, angle persisted in `DyBAddon_SavedVars.minimapAngle`); left-clicking opens the popup at any time
+- Exposes `DyBAddon.OnReadyCheckConsumablesChanged()` (popup on ready check) and `DyBAddon.OnMinimapReadyCheckConsumablesChanged()` (minimap button visibility) callbacks
 
 ### **DyBAddon.toc**
 - Addon manifest with metadata
@@ -104,7 +115,7 @@ The addon is modularized across 12 Lua files for clean separation of concerns:
 4. **GROUP_ROSTER_UPDATE**: Group inspector detects new members and queues inspections
 5. **INSPECT_READY**: Inspect results are received and printed to chat
 6. **READY_CHECK**: Consumable popup is shown when inside an instance
-7. **UNIT_AURA / PLAYER_EQUIPMENT_CHANGED**: Consumable icons refresh live while the popup is visible
+7. **UNIT_AURA / PLAYER_EQUIPMENT_CHANGED / GROUP_ROSTER_UPDATE**: Consumable and class buff icons refresh live while the popup is visible
 8. **PLAYER_REGEN_DISABLED / PLAYER_REGEN_ENABLED**: Combat timer starts/freezes on combat enter/exit
 9. **Option Toggling**: Callbacks fire immediately when user changes settings in-game
 
