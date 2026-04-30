@@ -82,40 +82,66 @@ local SPELLS_TO_TRACK = {
     },
 }
 
+local function FormatTimeRemaining(seconds)
+    if not seconds or seconds <= 0 then return nil end
+    if seconds > 3600 then
+        return "1h+"
+    elseif seconds >= 60 then
+        return math.floor(seconds / 60) .. "m"
+    else
+        return math.floor(seconds) .. "s"
+    end
+end
+
 -- ---- Buff detection ----
 
 local function HasSpecificBuff(targetSpellID)
     for i = 1, 40 do
         local aura = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
         if not aura then break end
-        if aura.spellId == targetSpellID then return true end
+        if aura.spellId == targetSpellID then
+            local remaining = (aura.expirationTime and aura.expirationTime > 0)
+                and (aura.expirationTime - GetTime()) or 0
+            return true, remaining
+        end
     end
-    return false
+    return false, 0
 end
 
 local function HasFlaskBuff()
     for i = 1, 40 do
         local aura = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
         if not aura then break end
-        if FLASK_SPELL_IDS[aura.spellId] then return true end
+        if FLASK_SPELL_IDS[aura.spellId] then
+            local remaining = (aura.expirationTime and aura.expirationTime > 0)
+                and (aura.expirationTime - GetTime()) or 0
+            return true, remaining
+        end
     end
-    return false
+    return false, 0
 end
 
 local function HasFoodBuff()
     for i = 1, 40 do
         local aura = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
         if not aura then break end
-        if aura.icon == FOOD_BUFF_ICON then return true end
+        if aura.icon == FOOD_BUFF_ICON then
+            local remaining = (aura.expirationTime and aura.expirationTime > 0)
+                and (aura.expirationTime - GetTime()) or 0
+            return true, remaining
+        end
     end
-    return false
+    return false, 0
 end
 
 local function HasWeaponBuff()
     -- Reference: https://warcraft.wiki.gg/wiki/API_GetWeaponEnchantInfo
-    local hasMainHandEnchant = GetWeaponEnchantInfo()
-    if hasMainHandEnchant then return true end
-    return false
+    local hasMainHandEnchant, mainHandExpiration = GetWeaponEnchantInfo()
+    if hasMainHandEnchant then
+        -- mainHandExpiration is in milliseconds
+        return true, (mainHandExpiration or 0) / 1000
+    end
+    return false, 0
 end
 
 local classInGroup = {}
@@ -135,10 +161,11 @@ local function GetBuffStatus()
     local neededSpells = GetNeededSpellData()
     local status = {}
     for _, spellInfo in ipairs(neededSpells) do
-        status[spellInfo.key] = false
+        status[spellInfo.key] = { active = false, remaining = 0 }
         for _, spellID in ipairs(spellInfo.spellID) do
-            if HasSpecificBuff(spellID) then
-                status[spellInfo.key] = true
+            local found, remaining = HasSpecificBuff(spellID)
+            if found then
+                status[spellInfo.key] = { active = true, remaining = remaining }
                 break
             end
         end
@@ -285,6 +312,8 @@ for i, cat in ipairs(CATEGORIES) do
     lbl:SetText(cat.label)
     lbl:SetTextColor(1, 1, 1)
 
+    slot.lbl = lbl
+    slot.originalLabel = cat.label
     slot.key = cat.key
     iconSlots[i] = slot
 end
@@ -322,6 +351,7 @@ for _, spellInfo in ipairs(SPELLS_TO_TRACK) do
     lbl:SetText(classLabel)
     lbl:SetTextColor(1, 1, 1)
     slot.lbl = lbl
+    slot.originalLabel = classLabel
 
     slot.key = spellInfo.key
     slot:Hide()
@@ -373,23 +403,29 @@ end
 
 -- Update icon visuals without repositioning (called on live buff changes)
 local function RefreshIcons()
-    local status = {
-        flask  = HasFlaskBuff(),
-        food   = HasFoodBuff(),
-        weapon = HasWeaponBuff(),
+    local flaskOk,  flaskTime  = HasFlaskBuff()
+    local foodOk,   foodTime   = HasFoodBuff()
+    local weaponOk, weaponTime = HasWeaponBuff()
+    local consumableStatus = {
+        flask  = { active = flaskOk,  remaining = flaskTime },
+        food   = { active = foodOk,   remaining = foodTime },
+        weapon = { active = weaponOk, remaining = weaponTime },
     }
 
     for _, slot in ipairs(iconSlots) do
-        local ok = status[slot.key]
+        local s = consumableStatus[slot.key]
+        local ok = s.active
         slot.tex:SetDesaturated(not ok)
         if ok then
             slot.tex:SetVertexColor(1, 1, 1, 1)
             slot.checkTex:Show()
             slot.crossTex:Hide()
+            slot.lbl:SetText(FormatTimeRemaining(s.remaining) or slot.originalLabel)
         else
             slot.tex:SetVertexColor(0.45, 0.45, 0.45, 1)
             slot.checkTex:Hide()
             slot.crossTex:Show()
+            slot.lbl:SetText(slot.originalLabel)
         end
     end
 
@@ -397,16 +433,19 @@ local function RefreshIcons()
     local buffStatus = GetBuffStatus()
     for _, slot in pairs(classIconSlotByKey) do
         if slot:IsShown() then
-            local ok = buffStatus[slot.key]
+            local s = buffStatus[slot.key]
+            local ok = s and s.active
             slot.tex:SetDesaturated(not ok)
             if ok then
                 slot.tex:SetVertexColor(1, 1, 1, 1)
                 slot.checkTex:Show()
                 slot.crossTex:Hide()
+                slot.lbl:SetText(FormatTimeRemaining(s.remaining) or slot.originalLabel)
             else
                 slot.tex:SetVertexColor(0.45, 0.45, 0.45, 1)
                 slot.checkTex:Hide()
                 slot.crossTex:Show()
+                slot.lbl:SetText(slot.originalLabel)
             end
         end
     end
