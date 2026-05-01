@@ -5,7 +5,7 @@ const { execSync } = require("child_process");
 const ROOT = __dirname;
 const TOC_FILE = path.join(ROOT, "DyBAddon.toc");
 const RELEASE_DIR = path.join(ROOT, "release");
-const ADDON_DIR_NAME = "DyB Addon";
+const ADDON_DIR_NAME = "DyBAddon";
 
 // --- Parse TOC file ---
 const tocContent = fs.readFileSync(TOC_FILE, "utf8");
@@ -72,7 +72,7 @@ const zipPath = path.join(RELEASE_DIR, zipName);
 
 // Use the zip CLI (available on macOS/Linux) or PowerShell on Windows
 try {
-  // Change into release dir so the zip contains "DyB Addon/..." at the root
+  // Change into release dir so the zip contains "DyBAddon/..." at the root
   execSync(`cd "${RELEASE_DIR}" && zip -r "${zipName}" "${ADDON_DIR_NAME}"`);
 } catch {
   // Fallback: PowerShell (Windows without zip)
