@@ -10,6 +10,13 @@ local scanPending = false
 
 local f = CreateFrame("Frame")
 
+local function IsValidGroupMember(unit)
+    local isValid = UnitExists(unit)
+        and UnitIsConnected(unit)
+        and UnitCanAssist("player", unit)
+    return isValid
+end
+
 -- Icon helpers ----------------------------------------------------------------
 
 local function GetRaceIcon(unit)
@@ -82,7 +89,7 @@ local function ProcessNextInspect()
     end
 
     -- Reference: https://warcraft.wiki.gg/wiki/API_NotifyInspect
-    if CanInspect(unitId) then
+    if CanInspect(unitId) and IsValidGroupMember(unitId) then
         isInspecting = true
         pendingUnit = unitId
         NotifyInspect(unitId)
@@ -123,7 +130,7 @@ local function ScanGroup()
 
     for i = 1, count do
         local unit = prefix .. i
-        if UnitExists(unit) and not UnitIsUnit(unit, "player") and UnitIsPlayer(unit) then
+        if not UnitIsUnit(unit, "player") and UnitIsPlayer(unit) and IsValidGroupMember(unit) then
             local guid = UnitGUID(unit)
             if guid and not announcedGUIDs[guid] then
                 announcedGUIDs[guid] = true
@@ -204,7 +211,7 @@ local function InspectAllMembers()
     local members = {}
     for i = 1, count do
         local unit = prefix .. i
-        if UnitExists(unit) and not UnitIsUnit(unit, "player") and UnitIsPlayer(unit) then
+        if not UnitIsUnit(unit, "player") and UnitIsPlayer(unit) and IsValidGroupMember(unit) then
             local guid = UnitGUID(unit)
             if guid then
                 table.insert(members, { unit = unit, guid = guid })
