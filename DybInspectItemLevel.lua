@@ -18,12 +18,13 @@ local function UpdateInspectItemLevel()
 		return
 	end
 
+	-- Reference: https://warcraft.wiki.gg/wiki/API_C_PaperDollInfo.GetInspectItemLevel
 	-- InspectFrame.unit is set by Blizzard to the currently inspected player's unit ID
 	local unit = InspectFrame and InspectFrame.unit
 	if not unit then return end
-	local ilvl = DyBAddon.GetItemLevelPrecise(unit)
+	local ilvl = C_PaperDollInfo.GetInspectItemLevel(unit)
 	if ilvl and ilvl > 0 then
-		text:SetText(string.format("|cFFFFD100iLvl: %.2f|r", ilvl))
+		text:SetText(string.format("|cFFFFD100iLvl: %.0f|r", ilvl))
 		text:Show()
 	else
 		text:Hide()
