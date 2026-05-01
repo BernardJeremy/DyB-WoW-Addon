@@ -34,6 +34,12 @@ local function UpdateDurabilityDisplay()
         return
     end
 
+    -- Only show on the main character tab (PaperDollFrame visible)
+    if not PaperDollFrame or not PaperDollFrame:IsShown() then
+        text:Hide()
+        return
+    end
+
     local totalCurrent, totalMax = 0, 0
     -- Reference: https://warcraft.wiki.gg/wiki/API_GetInventoryItemDurability
     -- Iterate all equipment slots; returns nil for slots that don't have durability
@@ -69,6 +75,13 @@ f:SetScript("OnEvent", function(self, event)
         self:UnregisterEvent("PLAYER_LOGIN")
         if CharacterFrame then
             CharacterFrame:HookScript("OnShow", UpdateDurabilityDisplay)
+        end
+        -- Hook PaperDollFrame to react to tab switches within CharacterFrame
+        if PaperDollFrame then
+            PaperDollFrame:HookScript("OnShow", UpdateDurabilityDisplay)
+            PaperDollFrame:HookScript("OnHide", function()
+                if durabilityText then durabilityText:Hide() end
+            end)
         end
     elseif CharacterFrame and CharacterFrame:IsShown() then
         UpdateDurabilityDisplay()
