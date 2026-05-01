@@ -593,9 +593,13 @@ f:SetScript("OnEvent", function(self, event, arg1)
         end
     elseif event == "GROUP_ROSTER_UPDATE" then
         if popup:IsShown() then
-            GetGroupMembers()
-            UpdatePopupLayout()
-            RefreshIcons()
+            -- Defer one second: GROUP_ROSTER_UPDATE can fire before UnitClass() is
+            -- available for newly joined members, causing their class to be missed.
+            C_Timer.After(1, function()
+                GetGroupMembers()
+                UpdatePopupLayout()
+                RefreshIcons()
+            end)
         end
     end
 end)
