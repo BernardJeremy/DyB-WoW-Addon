@@ -62,7 +62,7 @@ local function PrintMemberInfo(unit, specID, ilvl)
     local classIcon = GetClassIcon(classFile)
     local specIcon, specName = GetSpecMarkup(specID)
     local coloredName = GetClassColoredText(name, classFile)
-    local ilvlStr = (ilvl and ilvl > 0) and string.format("%.0f", ilvl) or "?"
+    local ilvlStr = (ilvl and ilvl > 0) and string.format("%.2f", ilvl) or "?"
 
     -- Build icon string, skipping empty race icon
     local icons = ""
@@ -179,8 +179,7 @@ f:SetScript("OnEvent", function(self, event, ...)
 
         if UnitExists(unit) and UnitGUID(unit) == inspectGUID then
             local specID = GetInspectSpecialization(unit)
-            -- Reference: https://warcraft.wiki.gg/wiki/API_C_PaperDollInfo.GetInspectItemLevel
-            local ilvl = C_PaperDollInfo.GetInspectItemLevel(unit)
+            local ilvl = DyBAddon.GetItemLevelPrecise(unit)
             PrintMemberInfo(unit, specID, ilvl)
         end
 
