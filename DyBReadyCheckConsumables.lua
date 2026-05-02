@@ -112,7 +112,7 @@ local function HasFlaskBuff()
     for i = 1, 40 do
         local aura = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
         if not aura then break end
-        if FLASK_SPELL_IDS[aura.spellId] then
+        if FLASK_SPELL_IDS[tonumber(aura.spellId)] then
             local remaining = (aura.expirationTime and aura.expirationTime > 0)
                 and (aura.expirationTime - GetTime()) or 0
             return true, remaining
