@@ -529,6 +529,16 @@ end)
 
 minimapBtn:SetScript("OnClick", function(self, button)
     if button == "LeftButton" and not minimapDragging then
+        -- Toggle: close if already open
+        if popup:IsShown() then
+            popup:Hide()
+            return
+        end
+        -- Reference: https://warcraft.wiki.gg/wiki/API_C_ChallengeMode.IsChallengeModeActive
+        if C_ChallengeMode.IsChallengeModeActive() then
+            print(L["rcc_mythic_blocked"])
+            return
+        end
         ShowConsumableStatus()
     end
 end)
@@ -574,9 +584,15 @@ end
 local f = CreateFrame("Frame")
 -- Reason: React to ready checks to display consumable status when inside an instance
 f:RegisterEvent("READY_CHECK")
+-- Reason: Close the popup after any loading screen (zone changes, instance entry, /reload)
+f:RegisterEvent("PLAYER_ENTERING_WORLD")
+-- Reason: Close the popup when a Mythic+ run starts (no loading screen occurs, so PLAYER_ENTERING_WORLD does not fire)
+f:RegisterEvent("CHALLENGE_MODE_START")
 
 f:SetScript("OnEvent", function(self, event, arg1)
-    if event == "READY_CHECK" then
+    if event == "PLAYER_ENTERING_WORLD" or event == "CHALLENGE_MODE_START" then
+        popup:Hide()
+    elseif event == "READY_CHECK" then
         if not (DyBAddon_SavedVars and DyBAddon_SavedVars.readyCheckConsumables) then return end
         local inInstance = IsInInstance()
         if not inInstance then return end
