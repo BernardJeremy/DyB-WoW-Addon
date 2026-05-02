@@ -147,5 +147,56 @@ f:SetScript("OnEvent", function(self, event, addonName)
         Settings.CreateCheckbox(catBuff, setting, L["opt_minimap_btn_tooltip"])
     end
 
+    -- -------------------------------------------------------------------------
+    -- Cursor Circle
+    -- -------------------------------------------------------------------------
+    local catCursor = Settings.RegisterVerticalLayoutSubcategory(category, L["opt_cursor_circle_category"])
+
+    do
+        local setting = Settings.RegisterAddOnSetting(catCursor,
+            "DyBAddon_CursorCircle", "cursorCircle",
+            DyBAddon_SavedVars, type(false),
+            L["opt_cursor_circle_label"], false)
+        setting:SetValueChangedCallback(DyBAddon.OnCursorCircleChanged)
+        Settings.CreateCheckbox(catCursor, setting, L["opt_cursor_circle_tooltip"])
+    end
+
+    do
+        local function GetCursorCircleColorOptions()
+            local container = Settings.CreateControlTextContainer()
+            container:Add("white",  L["cursor_circle_color_white"])
+            container:Add("red",    L["cursor_circle_color_red"])
+            container:Add("green",  L["cursor_circle_color_green"])
+            container:Add("blue",   L["cursor_circle_color_blue"])
+            container:Add("yellow", L["cursor_circle_color_yellow"])
+            container:Add("purple", L["cursor_circle_color_purple"])
+            container:Add("cyan",   L["cursor_circle_color_cyan"])
+            container:Add("orange", L["cursor_circle_color_orange"])
+            return container:GetData()
+        end
+
+        local setting = Settings.RegisterAddOnSetting(catCursor,
+            "DyBAddon_CursorCircleColor", "cursorCircleColor",
+            DyBAddon_SavedVars, type(""),
+            L["opt_cursor_circle_color_label"], "white")
+        setting:SetValueChangedCallback(DyBAddon.OnCursorCircleColorChanged)
+        Settings.CreateDropdown(catCursor, setting, GetCursorCircleColorOptions,
+            L["opt_cursor_circle_color_tooltip"])
+    end
+
+    do
+        local setting = Settings.RegisterAddOnSetting(catCursor,
+            "DyBAddon_CursorCircleSize", "cursorCircleSize",
+            DyBAddon_SavedVars, type(1),
+            L["opt_cursor_circle_size_label"], 96)
+        setting:SetValueChangedCallback(DyBAddon.OnCursorCircleSizeChanged)
+        -- Reference: https://warcraft.wiki.gg/wiki/Settings_API
+        local options = Settings.CreateSliderOptions(32, 128, 8)
+        options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right,
+            function(value) return value .. " px" end)
+        Settings.CreateSlider(catCursor, setting, options,
+            L["opt_cursor_circle_size_tooltip"])
+    end
+
     Settings.RegisterAddOnCategory(category)
 end)

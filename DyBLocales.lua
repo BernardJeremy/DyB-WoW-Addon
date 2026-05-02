@@ -28,6 +28,25 @@ L["opt_hide_bubbles_tooltip"]          = "Hides all in-game chat bubbles above c
 L["opt_combat_timer_label"]            = "Combat Timer"
 L["opt_combat_timer_tooltip"]          = "Displays a movable timer showing elapsed combat time. Shift + Left Click to move."
 
+L["opt_cursor_circle_label"]           = "Cursor Circle"
+L["opt_cursor_circle_tooltip"]         = "Displays a colored ring around the mouse cursor."
+
+L["opt_cursor_circle_color_label"]     = "Circle Color"
+L["opt_cursor_circle_color_tooltip"]   = "Choose the color of the cursor circle."
+
+L["cursor_circle_color_white"]         = "White"
+L["cursor_circle_color_red"]           = "Red"
+L["cursor_circle_color_green"]         = "Green"
+L["cursor_circle_color_blue"]          = "Blue"
+L["cursor_circle_color_yellow"]        = "Yellow"
+L["cursor_circle_color_purple"]        = "Purple"
+L["cursor_circle_color_cyan"]          = "Cyan"
+L["cursor_circle_color_orange"]        = "Orange"
+
+L["opt_cursor_circle_category"]        = "Cursor Circle"
+L["opt_cursor_circle_size_label"]      = "Circle Size"
+L["opt_cursor_circle_size_tooltip"]    = "Adjust the diameter of the cursor ring (32–128)."
+
 L["opt_group_inspect_label"]           = "Print Group Members"
 L["opt_group_inspect_tooltip"]         = "Prints new group members' info to chat."
 
@@ -74,6 +93,7 @@ L["rcc_cat_flask"]                     = "Flask"
 L["rcc_cat_food"]                      = "Food"
 L["rcc_cat_weapon"]                    = "Weapon"
 L["rcc_minimap_tooltip"]               = "DyBAddon - Buff Checker"
+L["rcc_mythic_blocked"]                = "|cFFFFD100Buff Checker:|r Unavailable during an active Mythic+ run."
 
 -- Item level decimal – tooltip additions
 L["ilvl_equipped_tooltip"]             = "(Equipped %.2f)"
@@ -100,6 +120,25 @@ if GetLocale() == "frFR" then
 
     L["opt_combat_timer_label"]            = "Chrono de combat"
     L["opt_combat_timer_tooltip"]          = "Affiche un chrono déplaçable affichant le temps écoulé en combat. Shift + Click gauche pour déplacer."
+
+    L["opt_cursor_circle_label"]           = "Cercle de curseur"
+    L["opt_cursor_circle_tooltip"]         = "Affiche un anneau coloré autour du curseur de la souris."
+
+    L["opt_cursor_circle_color_label"]    = "Couleur du cercle"
+    L["opt_cursor_circle_color_tooltip"]  = "Choisissez la couleur du cercle de curseur."
+
+    L["cursor_circle_color_white"]         = "Blanc"
+    L["cursor_circle_color_red"]           = "Rouge"
+    L["cursor_circle_color_green"]         = "Vert"
+    L["cursor_circle_color_blue"]          = "Bleu"
+    L["cursor_circle_color_yellow"]        = "Jaune"
+    L["cursor_circle_color_purple"]        = "Violet"
+    L["cursor_circle_color_cyan"]          = "Cyan"
+    L["cursor_circle_color_orange"]        = "Orange"
+
+    L["opt_cursor_circle_category"]        = "Cercle de curseur"
+    L["opt_cursor_circle_size_label"]      = "Taille du cercle"
+    L["opt_cursor_circle_size_tooltip"]    = "Ajuste le diamètre de l'anneau du curseur (32–128)."
 
     L["opt_group_inspect_label"]           = "Print les membres du groupe"
     L["opt_group_inspect_tooltip"]         = "Affiche les informations des nouveaux membres du groupe dans le tchat."
@@ -147,6 +186,7 @@ if GetLocale() == "frFR" then
     L["rcc_cat_food"]                      = "Food"
     L["rcc_cat_weapon"]                    = "Weapon"
     L["rcc_minimap_tooltip"]               = "DyBAddon - Buff Checker"
+    L["rcc_mythic_blocked"]                = "|cFFFFD100Buff Checker :|r Indisponible pendant un donjon Mythique+."
 
     -- Item level decimal – tooltip additions
     L["ilvl_equipped_tooltip"]             = "(Équipé %.2f)"

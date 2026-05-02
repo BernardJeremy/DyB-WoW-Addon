@@ -78,6 +78,15 @@ A small, **movable timer window** that shows the elapsed time of your current co
 
 ---
 
+### Cursor Circle
+Displays a **colored ring** around your mouse cursor in game, making it easier to spot at a glance.
+
+- Eight color presets: White, Red, Green, Blue, Yellow, Purple, Cyan, Orange.
+- Color updates immediately when changed in the options panel.
+- Disabled by default; zero performance overhead when turned off.
+
+---
+
 ### Meter Reset Prompt
 Displays a **Yes/No dialog** to reset all DPS meter sessions at key moments, so you always start a boss attempt with clean data.
 
