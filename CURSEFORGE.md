@@ -82,7 +82,9 @@ A small, **movable timer window** that shows the elapsed time of your current co
 Displays a **colored ring** around your mouse cursor in game, making it easier to spot at a glance.
 
 - Eight color presets: White, Red, Green, Blue, Yellow, Purple, Cyan, Orange.
-- Color updates immediately when changed in the options panel.
+- Adjustable ring diameter (32–128 px).
+- Optional **combat-only mode**: the ring appears automatically on combat entry and hides when combat ends.
+- Color and size update immediately when changed in the options panel.
 - Disabled by default; zero performance overhead when turned off.
 
 ---

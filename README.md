@@ -18,7 +18,7 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
   - The popup can be dismissed at any time via the X button in its top-left corner.
   - Both the popup-on-ready-check and the minimap button are independently togglable in the options panel. (both enabled by default)
 - **Combat Timer**: Displays a small, movable window showing the elapsed time since the start of the current combat in `mm:ss.c` format (tenths of a second). The timer resets automatically each time combat begins and freezes when combat ends, keeping the last value visible. Window position is saved across sessions. (configurable, enabled by default)
-- **Cursor Circle**: Displays a colored ring of dots around the mouse cursor while in game. The ring color can be chosen from eight presets (White, Red, Green, Blue, Yellow, Purple, Cyan, Orange). (configurable, disabled by default)
+- **Cursor Circle**: Displays a colored ring of dots around the mouse cursor while in game. The ring color can be chosen from eight presets (White, Red, Green, Blue, Yellow, Purple, Cyan, Orange). An optional **combat-only** mode hides the ring outside of combat and shows it automatically on combat entry. (configurable, disabled by default)
 
 All features can be enabled/disabled in-game via **System Settings > Addons > DyBAddon** and apply changes immediately.
 
@@ -113,12 +113,13 @@ The addon is modularized across 13 Lua files for clean separation of concerns:
 
 ### **DyBCursorCircle.lua**
 - Listens to `ADDON_LOADED` to initialize and apply the saved color and enabled state
+- Listens to `PLAYER_REGEN_DISABLED` / `PLAYER_REGEN_ENABLED` to show/hide the ring automatically when the **combat-only** option is enabled
 - Creates a tracking frame (`TOOLTIP` strata) positioned over the cursor every frame via `GetCursorPosition()` divided by `UIParent:GetEffectiveScale()`
 - Renders a smooth ring using the `Interface\Minimap\MiniMap-TrackingBorder` built-in texture (a white circle outline with a transparent center) sized 64×64 on a `TOOLTIP`-strata frame
 - Applies vertex color from eight presets (White, Red, Green, Blue, Yellow, Purple, Cyan, Orange) via `SetVertexColor`
 - The frame is hidden by default; `OnUpdate` only executes while the frame is shown, adding no overhead when disabled
-- Persists state in `DyBAddon_SavedVars.cursorCircle` (bool) and `DyBAddon_SavedVars.cursorCircleColor` (string key)
-- Exposes `DyBAddon.OnCursorCircleChanged()` and `DyBAddon.OnCursorCircleColorChanged()` callbacks for real-time options panel updates
+- Persists state in `DyBAddon_SavedVars.cursorCircle` (bool), `DyBAddon_SavedVars.cursorCircleColor` (string key), `DyBAddon_SavedVars.cursorCircleSize` (number), and `DyBAddon_SavedVars.cursorCircleOnlyCombat` (bool)
+- Exposes `DyBAddon.OnCursorCircleChanged()`, `DyBAddon.OnCursorCircleColorChanged()`, `DyBAddon.OnCursorCircleSizeChanged()`, and `DyBAddon.OnCursorCircleOnlyCombatChanged()` callbacks for real-time options panel updates
 
 ### **DyBAddon.toc**
 - Addon manifest with metadata

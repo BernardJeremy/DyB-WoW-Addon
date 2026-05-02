@@ -198,5 +198,14 @@ f:SetScript("OnEvent", function(self, event, addonName)
             L["opt_cursor_circle_size_tooltip"])
     end
 
+    do
+        local setting = Settings.RegisterAddOnSetting(catCursor,
+            "DyBAddon_CursorCircleOnlyCombat", "cursorCircleOnlyCombat",
+            DyBAddon_SavedVars, type(false),
+            L["opt_cursor_circle_combat_label"], false)
+        setting:SetValueChangedCallback(DyBAddon.OnCursorCircleOnlyCombatChanged)
+        Settings.CreateCheckbox(catCursor, setting, L["opt_cursor_circle_combat_tooltip"])
+    end
+
     Settings.RegisterAddOnCategory(category)
 end)

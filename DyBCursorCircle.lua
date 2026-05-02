@@ -78,6 +78,10 @@ end)
 local cursorCircleEventFrame = CreateFrame("Frame")
 -- Reason: Initialize saved variables and apply initial state after addon files load
 cursorCircleEventFrame:RegisterEvent("ADDON_LOADED")
+-- Reason: Show the ring on combat entry when combat-only mode is enabled
+cursorCircleEventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+-- Reason: Hide the ring on combat exit when combat-only mode is enabled
+cursorCircleEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 
 cursorCircleEventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
@@ -88,7 +92,26 @@ cursorCircleEventFrame:SetScript("OnEvent", function(self, event, ...)
         if DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircle == true then
             ApplySize(DyBAddon_SavedVars.cursorCircleSize or CIRCLE_SIZE_DEFAULT)
             ApplyColor(DyBAddon_SavedVars.cursorCircleColor or "white")
+            if DyBAddon_SavedVars.cursorCircleOnlyCombat then
+                -- Show only if a /reload happened while the player was already in combat
+                if UnitAffectingCombat("player") then
+                    circleFrame:Show()
+                end
+            else
+                circleFrame:Show()
+            end
+        end
+    elseif event == "PLAYER_REGEN_DISABLED" then
+        -- Entering combat: show ring if the feature is enabled and combat-only mode is on
+        if DyBAddon_SavedVars
+            and DyBAddon_SavedVars.cursorCircle == true
+            and DyBAddon_SavedVars.cursorCircleOnlyCombat == true then
             circleFrame:Show()
+        end
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        -- Leaving combat: hide ring if combat-only mode is on
+        if DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircleOnlyCombat == true then
+            circleFrame:Hide()
         end
     end
 end)
@@ -99,7 +122,14 @@ function DyBAddon.OnCursorCircleChanged(_, value)
     if value then
         ApplySize((DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircleSize) or CIRCLE_SIZE_DEFAULT)
         ApplyColor((DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircleColor) or "white")
-        circleFrame:Show()
+        if DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircleOnlyCombat then
+            -- Combat-only: only show if player is currently in combat
+            if UnitAffectingCombat("player") then
+                circleFrame:Show()
+            end
+        else
+            circleFrame:Show()
+        end
     else
         circleFrame:Hide()
     end
@@ -111,4 +141,18 @@ end
 
 function DyBAddon.OnCursorCircleSizeChanged(_, value)
     ApplySize(value or CIRCLE_SIZE_DEFAULT)
+end
+
+function DyBAddon.OnCursorCircleOnlyCombatChanged(_, value)
+    -- Has no effect when the main feature is disabled
+    if not (DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircle == true) then return end
+    if value then
+        -- Switching to combat-only: hide the ring unless currently in combat
+        if not UnitAffectingCombat("player") then
+            circleFrame:Hide()
+        end
+    else
+        -- Switching off combat-only: show the ring immediately
+        circleFrame:Show()
+    end
 end

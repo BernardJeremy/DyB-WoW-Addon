@@ -47,6 +47,9 @@ L["opt_cursor_circle_category"]        = "Cursor Circle"
 L["opt_cursor_circle_size_label"]      = "Circle Size"
 L["opt_cursor_circle_size_tooltip"]    = "Adjust the diameter of the cursor ring (32–128)."
 
+L["opt_cursor_circle_combat_label"]    = "Only in Combat"
+L["opt_cursor_circle_combat_tooltip"]  = "Only display the cursor ring while the player is in combat."
+
 L["opt_group_inspect_label"]           = "Print Group Members"
 L["opt_group_inspect_tooltip"]         = "Prints new group members' info to chat."
 
@@ -139,6 +142,9 @@ if GetLocale() == "frFR" then
     L["opt_cursor_circle_category"]        = "Cercle de curseur"
     L["opt_cursor_circle_size_label"]      = "Taille du cercle"
     L["opt_cursor_circle_size_tooltip"]    = "Ajuste le diamètre de l'anneau du curseur (32–128)."
+
+    L["opt_cursor_circle_combat_label"]    = "En combat uniquement"
+    L["opt_cursor_circle_combat_tooltip"]  = "N'affiche l'anneau du curseur que lorsque le joueur est en combat."
 
     L["opt_group_inspect_label"]           = "Print les membres du groupe"
     L["opt_group_inspect_tooltip"]         = "Affiche les informations des nouveaux membres du groupe dans le tchat."
