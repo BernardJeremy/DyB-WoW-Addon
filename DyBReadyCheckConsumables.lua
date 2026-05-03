@@ -403,6 +403,11 @@ end
 
 -- Update icon visuals without repositioning (called on live buff changes)
 local function RefreshIcons()
+    if C_ChallengeMode.IsChallengeModeActive() then
+        -- Don't update icons during Mythic+ runs, aura buffs are secret
+        return
+    end
+
     local flaskOk,  flaskTime  = HasFlaskBuff()
     local foodOk,   foodTime   = HasFoodBuff()
     local weaponOk, weaponTime = HasWeaponBuff()
