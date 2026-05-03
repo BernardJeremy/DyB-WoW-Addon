@@ -65,6 +65,8 @@ One icon per buff-providing class present in your group (Mage, Warrior, Evoker, 
 
 Each icon displays a **green checkmark** if the buff is active or a **desaturated red cross** if it is missing. Icons update live while the popup is open.
 
+A **build name label** at the bottom of the popup shows your current specialization and active talent loadout name — for example `Build : Fire / M+ Build`. If no named loadout is selected, only the spec name is displayed. The label updates live if you switch loadout while the popup is open.
+
 A **minimap button** (draggable, position saved) lets you open the popup at any time outside of a ready check. Both the popup-on-ready-check and the minimap button are independently toggleable.
 
 ---

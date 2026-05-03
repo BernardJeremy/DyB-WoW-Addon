@@ -14,6 +14,7 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
   - **Row 1 – Consumables**: Flask, Food buff, and Weapon enchant.
   - **Row 2 – Class buffs**: One icon per class buff provider present in the group (Mage, Warrior, Evoker, Druid, Priest, Shaman). Only classes actually in the group and meeting the required level are shown; both rows are horizontally centered even when they have different widths.
   - Each icon shows a green checkmark if the buff is present or is desaturated with a red cross if missing. Icons update live while the popup is open.
+  - A **build name label** at the bottom of the popup shows the current specialization and active talent loadout name in the format `Spec / Loadout` (e.g. `Fire / M+ Build`). If no named loadout is selected, only the spec name is shown. The label updates live when the player switches loadout while the popup is open.
   - A **minimap button** (draggable around the minimap edge, position saved across sessions) lets you open the popup at any time without a ready check.
   - The popup can be dismissed at any time via the X button in its top-left corner.
   - Both the popup-on-ready-check and the minimap button are independently togglable in the options panel. (both enabled by default)
@@ -105,9 +106,10 @@ The addon is modularized across 13 Lua files for clean separation of concerns:
   - Row 1 (consumables): Flask, Food, Weapon — always shown, horizontally centered
   - Row 2 (class buffs): one icon per relevant class in the group (Mage/Warrior/Evoker/Druid/Priest/Shaman), horizontally centered; row is hidden when no class buffs apply
 - Each icon is shown with a green checkmark when active, or desaturated with a red cross when missing
+- A **build name label** at the bottom of the popup displays the current specialization and active talent loadout in the format `Build : Spec / Loadout` (e.g. `Build : Fire / M+ Build`). If no named loadout is selected only the spec name is shown (`Build : Fire`). Uses `C_ClassTalents.GetLastSelectedSavedConfigID` + `C_Traits.GetConfigInfo` and updates live via `TRAIT_CONFIG_UPDATED` while the popup is open
 - The popup resizes dynamically so both rows always fit and remain centered
 - The popup is dismissible at any time via an X button in the top-left corner
-- While visible, listens to `UNIT_AURA`, `PLAYER_EQUIPMENT_CHANGED`, and `GROUP_ROSTER_UPDATE`; all unregistered when the popup is hidden
+- While visible, listens to `UNIT_AURA`, `PLAYER_EQUIPMENT_CHANGED`, `GROUP_ROSTER_UPDATE`, and `TRAIT_CONFIG_UPDATED`; all unregistered when the popup is hidden
 - Provides a **minimap button** that rotates around the minimap edge (draggable, angle persisted in `DyBAddon_SavedVars.minimapAngle`); left-clicking opens the popup at any time
 - Exposes `DyBAddon.OnReadyCheckConsumablesChanged()` (popup on ready check) and `DyBAddon.OnMinimapReadyCheckConsumablesChanged()` (minimap button visibility) callbacks
 
@@ -134,7 +136,7 @@ The addon is modularized across 13 Lua files for clean separation of concerns:
 4. **GROUP_ROSTER_UPDATE**: Group inspector detects new members and queues inspections
 5. **INSPECT_READY**: Inspect results are received and printed to chat
 6. **READY_CHECK**: Consumable popup is shown when inside an instance
-7. **UNIT_AURA / PLAYER_EQUIPMENT_CHANGED / GROUP_ROSTER_UPDATE**: Consumable and class buff icons refresh live while the popup is visible
+7. **UNIT_AURA / PLAYER_EQUIPMENT_CHANGED / GROUP_ROSTER_UPDATE / TRAIT_CONFIG_UPDATED**: Consumable and class buff icons, and the build name label, refresh live while the popup is visible
 8. **PLAYER_REGEN_DISABLED / PLAYER_REGEN_ENABLED**: Combat timer starts/freezes on combat enter/exit
 9. **Option Toggling**: Callbacks fire immediately when user changes settings in-game
 

@@ -226,6 +226,7 @@ local LABEL_GAP  = 4
 local LABEL_H    = 14
 local BOTTOM_PAD = 12
 local ROW_GAP    = 10
+local BUILD_GAP  =  8
 
 local CATEGORIES = {
     { key = "flask",  label = L["rcc_cat_flask"],  icon = "Interface\\Icons\\inv_flask_red" },
@@ -360,6 +361,43 @@ for _, spellInfo in ipairs(SPELLS_TO_TRACK) do
     classIconSlotByKey[spellInfo.key] = slot
 end
 
+-- Build name label, centered at the bottom of the popup
+local buildLabel = popup:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+buildLabel:SetPoint("BOTTOM", popup, "BOTTOM", 0, BOTTOM_PAD - 2)
+buildLabel:SetTextColor(0.8, 0.8, 0.8, 1)
+buildLabel:SetText("Build : /")
+
+-- Returns specName (string|nil), loadoutName (string|nil)
+-- Reference: https://warcraft.wiki.gg/wiki/API_C_ClassTalents.GetLastSelectedSavedConfigID
+local function GetCurrentBuildInfo()
+    local specIndex = GetSpecialization()
+    if not specIndex then return nil, nil end
+    -- GetSpecializationInfo returns: id, name, description, icon, role, primaryStat
+    local specID, specName = GetSpecializationInfo(specIndex)
+    if not specID then return nil, nil end
+    local configID = C_ClassTalents and C_ClassTalents.GetLastSelectedSavedConfigID
+        and C_ClassTalents.GetLastSelectedSavedConfigID(specID)
+    -- configID > 0 guards against nil and the starter-build sentinel (-2)
+    if not configID or configID <= 0 then return specName, nil end
+    -- Reference: https://warcraft.wiki.gg/wiki/API_C_Traits.GetConfigInfo
+    local configInfo = C_Traits and C_Traits.GetConfigInfo and C_Traits.GetConfigInfo(configID)
+    if configInfo and configInfo.name and configInfo.name ~= "" then
+        return specName, configInfo.name
+    end
+    return specName, nil
+end
+
+local function RefreshBuildName()
+    local specName, loadoutName = GetCurrentBuildInfo()
+    if specName and loadoutName then
+        buildLabel:SetText("Build : " .. specName .. " / " .. loadoutName)
+    elseif specName then
+        buildLabel:SetText("Build : " .. specName)
+    else
+        buildLabel:SetText("Build : /")
+    end
+end
+
 -- Resize the popup and position class buff slots based on the current group composition
 local function UpdatePopupLayout()
     local neededSpells = GetNeededSpellData()
@@ -371,6 +409,7 @@ local function UpdatePopupLayout()
     if numClassBuffs > 0 then
         newFH = newFH + ROW_GAP + ICON_SIZE + LABEL_GAP + LABEL_H
     end
+    newFH = newFH + BUILD_GAP + LABEL_H
     popup:SetSize(newFW, newFH)
 
     -- Center the consumable row within the (possibly wider) popup
@@ -469,6 +508,7 @@ local function ShowConsumableStatus()
     GetGroupMembers()
     UpdatePopupLayout()
     RefreshIcons()
+    RefreshBuildName()
     popup:Show()
 end
 
@@ -612,6 +652,10 @@ f:SetScript("OnEvent", function(self, event, arg1)
         if popup:IsShown() then
             RefreshIcons()
         end
+    elseif event == "TRAIT_CONFIG_UPDATED" then
+        -- Fires when switching talent loadouts; defer one frame so
+        -- GetLastSelectedSavedConfigID reflects the newly active loadout
+        C_Timer.After(0, RefreshBuildName)
     elseif event == "GROUP_ROSTER_UPDATE" then
         if popup:IsShown() then
             -- Defer one second: GROUP_ROSTER_UPDATE can fire before UnitClass() is
@@ -630,12 +674,15 @@ popup:SetScript("OnShow", function()
     f:RegisterEvent("UNIT_AURA")
     f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
     f:RegisterEvent("GROUP_ROSTER_UPDATE")
+    -- Reason: Refresh build name when the player switches talent loadout
+    f:RegisterEvent("TRAIT_CONFIG_UPDATED")
 end)
 
 popup:SetScript("OnHide", function()
     f:UnregisterEvent("UNIT_AURA")
     f:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
     f:UnregisterEvent("GROUP_ROSTER_UPDATE")
+    f:UnregisterEvent("TRAIT_CONFIG_UPDATED")
 end)
 
 -- Callback exposed to the options panel
