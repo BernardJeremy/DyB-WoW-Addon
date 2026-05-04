@@ -316,6 +316,17 @@ for i, cat in ipairs(CATEGORIES) do
     slot.lbl = lbl
     slot.originalLabel = cat.label
     slot.key = cat.key
+
+    slot:EnableMouse(true)
+    slot:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+        GameTooltip:AddLine(cat.label, 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    slot:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
+
     iconSlots[i] = slot
 end
 
@@ -357,6 +368,17 @@ for _, spellInfo in ipairs(SPELLS_TO_TRACK) do
     slot.key = spellInfo.key
     slot:Hide()
     lbl:Hide()
+
+    slot:EnableMouse(true)
+    -- Reference: https://warcraft.wiki.gg/wiki/API_GameTooltip_SetSpellByID
+    slot:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+        GameTooltip:SetSpellByID(spellInfo.spellID[1])
+        GameTooltip:Show()
+    end)
+    slot:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
 
     classIconSlotByKey[spellInfo.key] = slot
 end
