@@ -7,42 +7,51 @@ const TOC_FILE = path.join(ROOT, "DyBAddon.toc");
 const RELEASE_DIR = path.join(ROOT, "release");
 const ADDON_DIR_NAME = "DyBAddon";
 
-// --- Validate new version argument ---
-const newVersion = process.argv[2];
+// --- Parse flags and arguments ---
+const args = process.argv.slice(2);
+const buildOnly = args.includes("--build");
+const newVersion = args.find((a) => !a.startsWith("--"));
 
-// Read TOC to get the current version (needed for error message if arg is missing)
+// Read TOC file (always needed)
 const tocContentRaw = fs.readFileSync(TOC_FILE, "utf8");
-const currentVersionMatch = tocContentRaw.match(/^## Version:\s*(.+)$/m);
+const currentVersionMatch = tocContentRaw.match(/^## Version:\s*([^\r\n]+)/m);
 const currentVersion = currentVersionMatch ? currentVersionMatch[1].trim() : "(unknown)";
 
-if (!newVersion) {
-  console.error(`ERROR: Missing required argument: new version.`);
-  console.error(`       Current addon version: ${currentVersion}`);
-  console.error(`       Usage: node release.js <new-version>`);
-  process.exit(1);
-}
+if (!buildOnly) {
+  // --- Require version argument ---
+  if (!newVersion) {
+    console.error(`ERROR: Missing required argument: new version.`);
+    console.error(`       Current addon version: ${currentVersion}`);
+    console.error(`       Usage: node release.js <new-version>`);
+    console.error(`              node release.js --build          (use current TOC version, skip git)`);
+    process.exit(1);
+  }
 
-// --- Update version in TOC file ---
-const updatedTocContent = tocContentRaw.replace(
-  /^(## Version:\s*)(.+)$/m,
-  `$1${newVersion}`
-);
-fs.writeFileSync(TOC_FILE, updatedTocContent, "utf8");
-console.log(`Updated TOC version: ${currentVersion} -> ${newVersion}`);
+  // --- Update version in TOC file ---
+  const updatedTocContent = tocContentRaw.replace(
+    /^(## Version:\s*)[^\r\n]+/m,
+    `$1${newVersion}`
+  );
+  fs.writeFileSync(TOC_FILE, updatedTocContent, "utf8");
+  console.log(`Updated TOC version: ${currentVersion} -> ${newVersion}`);
 
-// --- Git commit the updated TOC ---
-try {
-  execSync(`git -C "${ROOT}" add "${TOC_FILE}"`);
-  execSync(`git -C "${ROOT}" commit -m "chores: bump version to v${newVersion}"`);
-  console.log(`Git commit: chores: bump version to v${newVersion}`);
-} catch (err) {
-  console.error("ERROR: Git commit failed.");
-  console.error(err.message);
-  process.exit(1);
+  // --- Git commit the updated TOC ---
+  try {
+    execSync(`git -C "${ROOT}" add "${TOC_FILE}"`);
+    execSync(`git -C "${ROOT}" commit -m "chores: bump version to v${newVersion}"`);
+    console.log(`Git commit: chores: bump version to v${newVersion}`);
+  } catch (err) {
+    console.error("ERROR: Git commit failed.");
+    console.error(err.message);
+    process.exit(1);
+  }
+} else {
+  console.log(`Build-only mode: skipping TOC update and git commit.`);
+  console.log(`Using current TOC version: ${currentVersion}`);
 }
 
 // --- Parse TOC file ---
-const tocContent = updatedTocContent;
+const tocContent = buildOnly ? tocContentRaw : fs.readFileSync(TOC_FILE, "utf8");
 const tocLines = tocContent.split(/\r?\n/);
 
 let version = null;
