@@ -536,7 +536,7 @@ end
 
 -- ---- Minimap Button ----
 
-local MINIMAP_BUTTON_SIZE = 16
+local MINIMAP_BUTTON_SIZE = 31
 
 -- Reference: https://warcraft.wiki.gg/wiki/UIOBJECT_Button
 local minimapBtn = CreateFrame("Button", "DyBBuffCheckMinimapBtn", Minimap)
@@ -545,26 +545,37 @@ minimapBtn:SetFrameStrata("MEDIUM")
 minimapBtn:SetFrameLevel(8)
 minimapBtn:SetClampedToScreen(false)
 
--- Circular border ring slightly larger than the icon
-local mmRing = minimapBtn:CreateTexture(nil, "BACKGROUND")
-mmRing:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-mmRing:SetSize(MINIMAP_BUTTON_SIZE + 4, MINIMAP_BUTTON_SIZE + 4)
-mmRing:SetPoint("CENTER", minimapBtn, "CENTER")
-mmRing:SetVertexColor(0.2, 0.2, 0.2, 1)
+-- Dark circular background fill behind the icon
+local mmBg = minimapBtn:CreateTexture(nil, "ARTWORK", nil, 1)
+mmBg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+mmBg:SetSize(22, 22)
+mmBg:SetPoint("TOPLEFT", minimapBtn, "TOPLEFT", 5, -5)
 
--- Circular icon using a round mask — avoids the black square from square background textures
-local mmIcon = minimapBtn:CreateTexture(nil, "ARTWORK")
+-- Icon centered on the button; TexCoord crop removes the default icon border padding
+local mmIcon = minimapBtn:CreateTexture(nil, "ARTWORK", nil, 2)
 mmIcon:SetTexture("Interface\\Icons\\inv_flask_red")
-mmIcon:SetAllPoints()
-local mmMask = minimapBtn:CreateMaskTexture()
-mmMask:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-mmMask:SetAllPoints(mmIcon)
-mmIcon:AddMaskTexture(mmMask)
+mmIcon:SetSize(17, 17)
+mmIcon:SetPoint("CENTER", minimapBtn, "CENTER")
+mmIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
+-- Golden ring: MiniMap-TrackingBorder must be anchored TOPLEFT (not centered) —
+-- the texture canvas is 50×50 with the ring drawn starting from that corner,
+-- which makes it visually frame the 31×31 button correctly.
+local mmRing = minimapBtn:CreateTexture(nil, "ARTWORK", nil, 3)
+mmRing:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+mmRing:SetSize(50, 50)
+mmRing:SetPoint("TOPLEFT", minimapBtn, "TOPLEFT")
+
+-- Highlight texture shown on mouse-over
+local mmHighlight = minimapBtn:CreateTexture(nil, "HIGHLIGHT")
+mmHighlight:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+mmHighlight:SetAllPoints()
+mmHighlight:SetBlendMode("ADD")
 
 local function SetMinimapButtonPosition(angle)
     local rad = math.rad(angle)
-    -- Compute radius dynamically so button sits just outside the actual minimap edge
-    local r = (Minimap:GetWidth() / 2) + (MINIMAP_BUTTON_SIZE / 2)
+    -- Offset of 5 px from the minimap edge so the button straddles the border
+    local r = (Minimap:GetWidth() / 2) + 5
     minimapBtn:ClearAllPoints()
     minimapBtn:SetPoint("CENTER", Minimap, "CENTER",
         math.cos(rad) * r,
@@ -612,6 +623,7 @@ end)
 
 minimapBtn:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+    GameTooltip:SetText("DyBAddon", 1, 1, 1)
     GameTooltip:AddLine(L["rcc_minimap_tooltip"])
     GameTooltip:Show()
 end)

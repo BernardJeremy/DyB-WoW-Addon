@@ -99,7 +99,7 @@ L["dur_display"]                       = "Durability: %s%d%%|r"
 L["rcc_cat_flask"]                     = "Flask"
 L["rcc_cat_food"]                      = "Food"
 L["rcc_cat_weapon"]                    = "Weapon"
-L["rcc_minimap_tooltip"]               = "DyBAddon - Buff Checker"
+L["rcc_minimap_tooltip"]               = "Buff Checker"
 L["rcc_mythic_blocked"]                = "|cFFFFD100Buff Checker:|r Unavailable during an active Mythic+ run."
 
 -- Item level decimal – tooltip additions
@@ -199,7 +199,7 @@ if GetLocale() == "frFR" then
     L["rcc_cat_flask"]                     = "Flask"
     L["rcc_cat_food"]                      = "Food"
     L["rcc_cat_weapon"]                    = "Weapon"
-    L["rcc_minimap_tooltip"]               = "DyBAddon - Buff Checker"
+    L["rcc_minimap_tooltip"]               = "Buff Checker"
     L["rcc_mythic_blocked"]                = "|cFFFFD100Buff Checker :|r Indisponible pendant un donjon Mythique+."
 
     -- Item level decimal – tooltip additions
