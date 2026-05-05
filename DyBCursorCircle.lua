@@ -75,13 +75,44 @@ circleFrame:SetScript("OnUpdate", function(self)
         (y - CURSOR_HOTSPOT_OFFSET_PX) / scale)
 end)
 
+-- Returns true if the circle should currently be visible given the display mode.
+-- Reference: https://warcraft.wiki.gg/wiki/API_IsInInstance
+local function ShouldShowCircle()
+    if not (DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircle == true) then
+        return false
+    end
+    local mode = (DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircleDisplay) or "always"
+    if mode == "combat" then
+        return UnitAffectingCombat("player") == true
+    elseif mode == "instance" then
+        local inInstance = IsInInstance()
+        return inInstance == true
+    elseif mode == "combat_instance" then
+        local inInstance = IsInInstance()
+        return UnitAffectingCombat("player") == true and inInstance == true
+    end
+    -- "always" or unknown value
+    return true
+end
+
+local function UpdateCircleVisibility()
+    if ShouldShowCircle() then
+        circleFrame:Show()
+    else
+        circleFrame:Hide()
+    end
+end
+
 local cursorCircleEventFrame = CreateFrame("Frame")
 -- Reason: Initialize saved variables and apply initial state after addon files load
 cursorCircleEventFrame:RegisterEvent("ADDON_LOADED")
--- Reason: Show the ring on combat entry when combat-only mode is enabled
+-- Reason: Update visibility on combat entry/exit for combat and combat_instance modes
 cursorCircleEventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
--- Reason: Hide the ring on combat exit when combat-only mode is enabled
 cursorCircleEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+-- Reason: Update visibility when entering or leaving an instance for instance and combat_instance modes
+cursorCircleEventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+-- Reason: Update visibility for seamless transitions (e.g. Delves) that have no loading screen
+cursorCircleEventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 
 cursorCircleEventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
@@ -92,27 +123,11 @@ cursorCircleEventFrame:SetScript("OnEvent", function(self, event, ...)
         if DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircle == true then
             ApplySize(DyBAddon_SavedVars.cursorCircleSize or CIRCLE_SIZE_DEFAULT)
             ApplyColor(DyBAddon_SavedVars.cursorCircleColor or "white")
-            if DyBAddon_SavedVars.cursorCircleOnlyCombat then
-                -- Show only if a /reload happened while the player was already in combat
-                if UnitAffectingCombat("player") then
-                    circleFrame:Show()
-                end
-            else
-                circleFrame:Show()
-            end
+            UpdateCircleVisibility()
         end
-    elseif event == "PLAYER_REGEN_DISABLED" then
-        -- Entering combat: show ring if the feature is enabled and combat-only mode is on
-        if DyBAddon_SavedVars
-            and DyBAddon_SavedVars.cursorCircle == true
-            and DyBAddon_SavedVars.cursorCircleOnlyCombat == true then
-            circleFrame:Show()
-        end
-    elseif event == "PLAYER_REGEN_ENABLED" then
-        -- Leaving combat: hide ring if combat-only mode is on
-        if DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircleOnlyCombat == true then
-            circleFrame:Hide()
-        end
+    else
+        -- PLAYER_REGEN_DISABLED, PLAYER_REGEN_ENABLED, PLAYER_ENTERING_WORLD, ZONE_CHANGED_NEW_AREA
+        UpdateCircleVisibility()
     end
 end)
 
@@ -122,14 +137,7 @@ function DyBAddon.OnCursorCircleChanged(_, value)
     if value then
         ApplySize((DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircleSize) or CIRCLE_SIZE_DEFAULT)
         ApplyColor((DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircleColor) or "white")
-        if DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircleOnlyCombat then
-            -- Combat-only: only show if player is currently in combat
-            if UnitAffectingCombat("player") then
-                circleFrame:Show()
-            end
-        else
-            circleFrame:Show()
-        end
+        UpdateCircleVisibility()
     else
         circleFrame:Hide()
     end
@@ -143,16 +151,6 @@ function DyBAddon.OnCursorCircleSizeChanged(_, value)
     ApplySize(value or CIRCLE_SIZE_DEFAULT)
 end
 
-function DyBAddon.OnCursorCircleOnlyCombatChanged(_, value)
-    -- Has no effect when the main feature is disabled
-    if not (DyBAddon_SavedVars and DyBAddon_SavedVars.cursorCircle == true) then return end
-    if value then
-        -- Switching to combat-only: hide the ring unless currently in combat
-        if not UnitAffectingCombat("player") then
-            circleFrame:Hide()
-        end
-    else
-        -- Switching off combat-only: show the ring immediately
-        circleFrame:Show()
-    end
+function DyBAddon.OnCursorCircleDisplayChanged(_, value)
+    UpdateCircleVisibility()
 end

@@ -199,12 +199,22 @@ f:SetScript("OnEvent", function(self, event, addonName)
     end
 
     do
+        local function GetCursorCircleDisplayOptions()
+            local container = Settings.CreateControlTextContainer()
+            container:Add("always",          L["cursor_circle_display_always"])
+            container:Add("combat",          L["cursor_circle_display_combat"])
+            container:Add("instance",        L["cursor_circle_display_instance"])
+            container:Add("combat_instance", L["cursor_circle_display_combat_instance"])
+            return container:GetData()
+        end
+
         local setting = Settings.RegisterAddOnSetting(catCursor,
-            "DyBAddon_CursorCircleOnlyCombat", "cursorCircleOnlyCombat",
-            DyBAddon_SavedVars, type(false),
-            L["opt_cursor_circle_combat_label"], false)
-        setting:SetValueChangedCallback(DyBAddon.OnCursorCircleOnlyCombatChanged)
-        Settings.CreateCheckbox(catCursor, setting, L["opt_cursor_circle_combat_tooltip"])
+            "DyBAddon_CursorCircleDisplay", "cursorCircleDisplay",
+            DyBAddon_SavedVars, type(""),
+            L["opt_cursor_circle_display_label"], "always")
+        setting:SetValueChangedCallback(DyBAddon.OnCursorCircleDisplayChanged)
+        Settings.CreateDropdown(catCursor, setting, GetCursorCircleDisplayOptions,
+            L["opt_cursor_circle_display_tooltip"])
     end
 
     Settings.RegisterAddOnCategory(category)

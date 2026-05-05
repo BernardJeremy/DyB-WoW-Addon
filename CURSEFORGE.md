@@ -85,7 +85,11 @@ Displays a **colored ring** around your mouse cursor in game, making it easier t
 
 - Eight color presets: White, Red, Green, Blue, Yellow, Purple, Cyan, Orange.
 - Adjustable ring diameter (32–128 px).
-- Optional **combat-only mode**: the ring appears automatically on combat entry and hides when combat ends.
+- A **Display** setting to control when the ring appears:
+  - **Always**
+  - **Only in Combat** — ring shows on combat entry, hides when combat ends.
+  - **Only in Instance** — ring shows when inside any instance, hides in the open world.
+  - **Only in Combat & Instance** — ring shows only when both conditions are met simultaneously.
 - Color and size update immediately when changed in the options panel.
 - Disabled by default; zero performance overhead when turned off.
 
