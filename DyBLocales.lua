@@ -60,6 +60,9 @@ L["opt_group_inspect_tooltip"]         = "Prints new group members' info to chat
 L["opt_group_inspect_raid_label"]      = "Inspect in Raids"
 L["opt_group_inspect_raid_tooltip"]    = "Inspection also runs inside raid groups."
 
+L["opt_group_inspect_mplus_label"]     = "Show M+ Rating"
+L["opt_group_inspect_mplus_tooltip"]   = "Appends the Mythic+ rating to the group member info line."
+
 L["opt_inspect_ilvl_label"]            = "Show iLvl on Inspect"
 L["opt_inspect_ilvl_tooltip"]          = "Shows the inspected player's iLvl in the inspect frame."
 
@@ -85,6 +88,7 @@ L["opt_minimap_btn_tooltip"]           = "Shows a consumable and class buff summ
 L["gi_not_in_group"]                   = "You are not in any group."
 L["gi_no_members"]                     = "No members to inspect."
 L["gi_ilvl"]                           = "iLvl %s"
+L["gi_mplus"]                          = "M+ : %s"
 
 -- Meter Reset dialog
 L["mr_dialog_text"]                    = "Do you want to reset combat meters?"
@@ -160,6 +164,9 @@ if GetLocale() == "frFR" then
     L["opt_group_inspect_raid_label"]      = "Print inspection en raid"
     L["opt_group_inspect_raid_tooltip"]    = "L'inspection des membres fonctionne également dans les groupes de raid."
 
+    L["opt_group_inspect_mplus_label"]     = "Afficher le score M+"
+    L["opt_group_inspect_mplus_tooltip"]   = "Ajoute le score Mythique+ à la ligne d'informations du membre."
+
     L["opt_inspect_ilvl_label"]            = "Afficher l'iLvl à l'inspection"
     L["opt_inspect_ilvl_tooltip"]          = "Affiche l'iLvl du joueur inspecté dans la fenêtre d'inspection."
 
@@ -185,6 +192,7 @@ if GetLocale() == "frFR" then
     L["gi_not_in_group"]                   = "Vous n'êtes dans aucun groupe."
     L["gi_no_members"]                     = "Aucun membre à inspecter."
     L["gi_ilvl"]                           = "iLvl %s"
+    L["gi_mplus"]                          = "M+ : %s"
 
     -- Meter Reset dialog
     L["mr_dialog_text"]                    = "Voulez-vous réinitialiser les compteurs de combat ?"

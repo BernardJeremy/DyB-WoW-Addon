@@ -71,6 +71,15 @@ f:SetScript("OnEvent", function(self, event, addonName)
 
     do
         local setting = Settings.RegisterAddOnSetting(catInspect,
+            "DyBAddon_GroupInspectMplus", "groupInspectMplus",
+            DyBAddon_SavedVars, type(true),
+            L["opt_group_inspect_mplus_label"], true)
+        setting:SetValueChangedCallback(DyBAddon.OnGroupInspectMplusChanged)
+        Settings.CreateCheckbox(catInspect, setting, L["opt_group_inspect_mplus_tooltip"])
+    end
+
+    do
+        local setting = Settings.RegisterAddOnSetting(catInspect,
             "DyBAddon_InspectItemLevel", "inspectItemLevel",
             DyBAddon_SavedVars, type(true),
             L["opt_inspect_ilvl_label"], true)

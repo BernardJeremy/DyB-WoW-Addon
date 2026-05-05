@@ -69,8 +69,19 @@ local function PrintMemberInfo(unit, specID, ilvl)
     if raceIcon ~= "" then icons = raceIcon .. " " end
     icons = icons .. classIcon .. " " .. specIcon
 
-    print(string.format("%s%s %s - %s - " .. L["gi_ilvl"],
-        ADDON_PREFIX, icons, coloredName, specName, ilvlStr))
+    local line = string.format("%s%s %s - %s - " .. L["gi_ilvl"],
+        ADDON_PREFIX, icons, coloredName, specName, ilvlStr)
+
+    -- Append Mythic+ rating if the option is enabled
+    -- Reference: https://warcraft.wiki.gg/wiki/API_C_PlayerInfo.GetPlayerMythicPlusRatingSummary
+    if DyBAddon_SavedVars and DyBAddon_SavedVars.groupInspectMplus then
+        local ratingSummary = C_PlayerInfo.GetPlayerMythicPlusRatingSummary(unit)
+        local score = ratingSummary and ratingSummary.currentSeasonScore or 0
+        local mplusStr = (score and score > 0) and tostring(score) or "0"
+        line = line .. " - " .. string.format(L["gi_mplus"], mplusStr)
+    end
+
+    print(line)
 end
 
 -- Inspect queue ---------------------------------------------------------------
@@ -242,4 +253,8 @@ end
 
 function DyBAddon.OnGroupInspectRaidChanged(_, value)
     -- Takes effect on next group change
+end
+
+function DyBAddon.OnGroupInspectMplusChanged(_, value)
+    -- Takes effect on next inspection
 end

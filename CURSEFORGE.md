@@ -19,10 +19,11 @@ Hides the speech bubbles that appear above NPC and player characters in the worl
 ---
 
 ### Group Inspector
-When you join a group or a new member joins yours, each member is automatically inspected and their **race**, **class**, **specialization**, and **item level** are printed to your chat window — with inline icons for quick visual scanning.
+When you join a group or a new member joins yours, each member is automatically inspected and their **race**, **class**, **specialization**, **item level**, and **Mythic+ rating** are printed to your chat window — with inline icons for quick visual scanning.
 
 - Inspection is queued one player at a time with throttling to avoid API rate limits.
 - A separate option controls whether inspections also run inside **raid groups** (disabled by default to avoid overhead in large groups).
+- The **M+ rating** display is independently togglable (enabled by default).
 - Use the **/info** slash command to re-inspect and print the current group at any time.
 
 ---

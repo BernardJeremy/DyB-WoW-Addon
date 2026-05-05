@@ -6,7 +6,7 @@ A lightweight World of Warcraft addon for DayBar that provides customizable game
 
 - **Force 24-Hour Clock**: Automatically enables 24-hour military time format on login (configurable, enabled by default)
 - **Hide NPC Chat Bubbles**: Toggle to hide all in-game chat bubbles above characters (configurable, disabled by default)
-- **Group Inspector**: When joining a group or when a new member arrives, logs each member's race (with icon), class (with icon), specialization (with icon), and item level to your chat window (configurable, enabled by default). A separate option controls whether inspection runs in raid groups (disabled by default).
+- **Group Inspector**: When joining a group or when a new member arrives, logs each member's race (with icon), class (with icon), specialization (with icon), item level, and **Mythic+ rating** to your chat window (configurable, enabled by default). A separate option controls whether inspection runs in raid groups (disabled by default). The M+ rating display is independently togglable (enabled by default).
 - **Decimal Item Level**: Replaces the character sheet item level display with a two-decimal-precision value. Shows equipped item level alongside the overall average in the tooltip, and includes PvP item level when it differs. (configurable, enabled by default)
 - **Inspect Item Level**: When inspecting another player, their item level is shown as a gold number overlay in the bottom-left corner of the Inspect frame. (configurable, enabled by default)
 - **Durability Display**: Shows the average item durability percentage (sum of current / sum of max across all equipped items) in the top-left area of the character frame header, between the class/spec icon and the class/spec name. The percentage is color-coded: green (≥60%), gold (30–59%), red (<30%). (configurable, enabled by default)
@@ -53,8 +53,9 @@ The addon is modularized across 13 Lua files for clean separation of concerns:
 - Listens to `GROUP_ROSTER_UPDATE` to detect new group members
 - Uses `NotifyInspect()` / `INSPECT_READY` to query each member's specialization and item level
 - Displays race, class, and spec icons inline in chat via texture escape sequences
+- Appends the Mythic+ current season rating via `C_PlayerInfo.GetPlayerMythicPlusRatingSummary()` when enabled
 - Queues inspect requests one at a time with throttling and a 5-second safety timeout
-- Exposes `DyBAddon.OnGroupInspectChanged()` and `DyBAddon.OnGroupInspectRaidChanged()` callbacks
+- Exposes `DyBAddon.OnGroupInspectChanged()`, `DyBAddon.OnGroupInspectRaidChanged()`, and `DyBAddon.OnGroupInspectMplusChanged()` callbacks
 - Offers a slash command `/info` to log up to date group members info
 
 ### **DyBDurability.lua**
@@ -66,7 +67,7 @@ The addon is modularized across 13 Lua files for clean separation of concerns:
 
 ### **DyBOptions.lua**
 - Registers the settings category using the `Settings` API
-- Creates eleven checkbox options with tooltips across five subcategories
+- Creates twelve checkbox options with tooltips across five subcategories
 - Initializes saved variables on `ADDON_LOADED`
 - Manages setting callbacks for immediate UI updates
 
