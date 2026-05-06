@@ -76,9 +76,13 @@ local function PrintMemberInfo(unit, specID, ilvl)
     -- Reference: https://warcraft.wiki.gg/wiki/API_C_PlayerInfo.GetPlayerMythicPlusRatingSummary
     if DyBAddon_SavedVars and DyBAddon_SavedVars.groupInspectMplus then
         local ratingSummary = C_PlayerInfo.GetPlayerMythicPlusRatingSummary(unit)
-        local score = ratingSummary and ratingSummary.currentSeasonScore or 0
-        local mplusStr = (score and score > 0) and tostring(score) or "0"
-        line = line .. " - " .. string.format(L["gi_mplus"], mplusStr)
+        if not ratingSummary then
+            line = line .. " - " .. string.format(L["gi_mplus"], "?")
+        else
+            local score = ratingSummary and ratingSummary.currentSeasonScore or 0
+            local mplusStr = (score and score > 0) and tostring(score) or "0"
+            line = line .. " - " .. string.format(L["gi_mplus"], mplusStr)
+        end
     end
 
     print(line)
